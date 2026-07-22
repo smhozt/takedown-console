@@ -366,9 +366,9 @@ document.getElementById('configToggle').addEventListener('click', () => {
 
 async function loadSavedConfig(){
   try{
-    const result = await window.storage.get('github-config', false);
-    if(result && result.value){
-      const cfg = JSON.parse(result.value);
+    const raw = localStorage.getItem('github-config');
+    if(raw){
+      const cfg = JSON.parse(raw);
       document.getElementById('repo').value = cfg.repo || '';
       document.getElementById('workflowFile').value = cfg.workflowFile || '';
       document.getElementById('branch').value = cfg.branch || 'main';
@@ -379,9 +379,9 @@ async function loadSavedConfig(){
 
 async function loadLog(){
   try{
-    const result = await window.storage.get('dispatch-log', false);
-    if(result && result.value){
-      const entries = JSON.parse(result.value);
+    const raw = localStorage.getItem('dispatch-log');
+    if(raw){
+      const entries = JSON.parse(raw);
       renderLog(entries);
       caseCounter = entries.length;
     }
@@ -412,13 +412,13 @@ function renderLog(entries){
 async function saveLogEntry(entry){
   let entries = [];
   try{
-    const result = await window.storage.get('dispatch-log', false);
-    if(result && result.value) entries = JSON.parse(result.value);
+    const raw = localStorage.getItem('dispatch-log');
+    if(raw) entries = JSON.parse(raw);
   }catch(e){}
   entries.push(entry);
   if(entries.length > 100) entries = entries.slice(-100);
   try{
-    await window.storage.set('dispatch-log', JSON.stringify(entries), false);
+    localStorage.setItem('dispatch-log', JSON.stringify(entries));
   }catch(e){ console.error('log kaydedilemedi', e); }
   caseCounter = entries.length;
   renderLog(entries);
@@ -432,8 +432,56 @@ async function saveConfigIfRemembered(){
       workflowFile: document.getElementById('workflowFile').value.trim(),
       branch: document.getElementById('branch').value.trim() || 'main',
     };
-    try{ await window.storage.set('github-config', JSON.stringify(cfg), false); }catch(e){}
+    try{ localStorage.setItem('github-config', JSON.stringify(cfg)); }catch(e){}
   }
+}
+
+// ============================================================
+// TÜM FORM ALANLARI (PAT HARİÇ) — her değişiklikte otomatik kaydet,
+// sayfa açılışında geri yükle. Böylece sayfa yenilenince/kapanınca
+// domain listesi, notlar, hedef seçimleri vs. kaybolmuyor.
+// ============================================================
+const PERSISTED_FIELD_IDS = [
+  'domains', 'brand', 'activeOverride', 'reporterEmail',
+  'notes', 'customEmail', 'repo', 'workflowFile', 'branch',
+];
+
+function saveFormState(){
+  const state = {};
+  PERSISTED_FIELD_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if(el) state[id] = el.value;
+  });
+  state.targets = getActiveTargets();
+  try{ localStorage.setItem('form-state', JSON.stringify(state)); }catch(e){}
+}
+
+function loadFormState(){
+  try{
+    const raw = localStorage.getItem('form-state');
+    if(!raw) return;
+    const state = JSON.parse(raw);
+    PERSISTED_FIELD_IDS.forEach(id => {
+      const el = document.getElementById(id);
+      if(el && state[id] !== undefined) el.value = state[id];
+    });
+    if(Array.isArray(state.targets)){
+      document.querySelectorAll('.channel').forEach(ch => {
+        const cb = ch.querySelector('input');
+        cb.checked = state.targets.includes(ch.dataset.target);
+      });
+    }
+  }catch(e){ /* kayıtlı form yok, normal */ }
+}
+
+function wireAutoSave(){
+  PERSISTED_FIELD_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.addEventListener('input', saveFormState);
+  });
+  document.querySelectorAll('.channel').forEach(ch => {
+    ch.addEventListener('click', saveFormState);
+  });
 }
 
 function showStatus(type, text){
@@ -526,7 +574,9 @@ document.getElementById('dispatchBtn').addEventListener('click', async () => {
   }
 });
 
+loadFormState();
 refreshChannelUI();
+wireAutoSave();
 loadSavedConfig();
 loadLog();
 </script>
