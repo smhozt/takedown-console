@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Takedown Console — Poligon Brand Protection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B1220;
+    --panel:#121B2E;
+    --panel-2:#17233A;
+    --line:#243450;
+    --text:#E7ECF5;
+    --muted:#8592AA;
+    --signal:#FF8A3D;
+    --signal-dim:#7A4A26;
+    --confirm:#35D4A0;
+    --danger:#FF5D5D;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 15% -10%, rgba(255,138,61,0.07), transparent 60%),
+      radial-gradient(900px 500px at 110% 10%, rgba(53,212,160,0.06), transparent 55%),
+      var(--ink);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    min-height:100vh;
+  }
+  .wrap{max-width:1100px; margin:0 auto; padding:32px 20px 80px;}
+
+  .topbar{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:12px;}
+  .brandmark{font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:22px; letter-spacing:0.02em;}
+  .brandmark span{color:var(--signal);}
+  .case-ticker{font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--muted); letter-spacing:0.04em;}
+
+  .grid{display:grid; grid-template-columns: 1.15fr 0.85fr; gap:20px;}
+  @media (max-width: 860px){ .grid{grid-template-columns: 1fr;} }
+
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:22px 22px 26px;
+  }
+  .panel h2{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:15px;
+    font-weight:500;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin:0 0 18px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .panel h2 .dot{width:6px; height:6px; border-radius:50%; background:var(--signal); display:inline-block;}
+
+  label{display:block; font-size:12.5px; color:var(--muted); margin:0 0 6px; letter-spacing:0.01em;}
+  .field{margin-bottom:16px;}
+  textarea, input[type="text"], input[type="password"], select{
+    width:100%;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    color:var(--text);
+    border-radius:7px;
+    padding:10px 12px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    outline:none;
+    transition:border-color .15s ease;
+  }
+  textarea::placeholder, input::placeholder{color:#4E5C74;}
+  textarea:focus, input:focus, select:focus{border-color:var(--signal);}
+  textarea{min-height:88px; resize:vertical; line-height:1.5;}
+  select{font-family:'Inter', sans-serif; appearance:none; background-image:linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 18px) calc(50% - 3px), calc(100% - 13px) calc(50% - 3px); background-size:5px 5px, 5px 5px; background-repeat:no-repeat;}
+
+  .hint{font-size:11.5px; color:#5B6980; margin-top:5px; line-height:1.4;}
+
+  .channels{display:flex; flex-wrap:wrap; gap:8px;}
+  .channel{
+    display:flex; align-items:center; gap:7px;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:7px 13px 7px 10px;
+    cursor:pointer;
+    font-size:12.5px;
+    color:var(--muted);
+    user-select:none;
+    transition: all .15s ease;
+  }
+  .channel input{display:none;}
+  .channel .node{width:8px; height:8px; border-radius:50%; background:#3A4863; transition:all .15s ease; flex-shrink:0;}
+  .channel.active{border-color:var(--signal); color:var(--text); background:rgba(255,138,61,0.08);}
+  .channel.active .node{background:var(--signal); box-shadow:0 0 8px rgba(255,138,61,0.7);}
+
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  @media (max-width:600px){ .row2{grid-template-columns:1fr;} }
+
+  .btn{
+    width:100%;
+    background:var(--signal);
+    color:#1A1006;
+    border:none;
+    border-radius:7px;
+    padding:13px 18px;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:14px;
+    letter-spacing:0.02em;
+    cursor:pointer;
+    margin-top:6px;
+    transition:filter .15s ease, transform .1s ease;
+  }
+  .btn:hover{filter:brightness(1.08);}
+  .btn:active{transform:scale(0.99);}
+  .btn:disabled{opacity:0.5; cursor:not-allowed;}
+
+  .status{
+    margin-top:14px;
+    padding:12px 14px;
+    border-radius:7px;
+    font-size:13px;
+    font-family:'IBM Plex Mono', monospace;
+    display:none;
+    line-height:1.5;
+  }
+  .status.show{display:block;}
+  .status.ok{background:rgba(53,212,160,0.1); border:1px solid rgba(53,212,160,0.35); color:var(--confirm);}
+  .status.err{background:rgba(255,93,93,0.1); border:1px solid rgba(255,93,93,0.35); color:var(--danger);}
+  .status.pending{background:rgba(255,138,61,0.08); border:1px solid rgba(255,138,61,0.3); color:var(--signal);}
+
+  .relay{
+    display:flex;
+    align-items:center;
+    gap:0;
+    margin:4px 0 20px;
+    overflow-x:auto;
+    padding-bottom:4px;
+  }
+  .relay-node{
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    min-width:64px;
+    flex-shrink:0;
+  }
+  .relay-dot{
+    width:14px; height:14px; border-radius:50%;
+    background:var(--panel-2); border:2px solid var(--line);
+    transition:all .25s ease;
+  }
+  .relay-dot.lit{background:var(--signal); border-color:var(--signal); box-shadow:0 0 12px rgba(255,138,61,0.8);}
+  .relay-dot.sent{background:var(--confirm); border-color:var(--confirm); box-shadow:0 0 12px rgba(53,212,160,0.8);}
+  .relay-label{font-size:10px; color:var(--muted); text-align:center; letter-spacing:0.02em;}
+  .relay-line{height:2px; flex:1; background:var(--line); min-width:16px; margin-top:-20px;}
+
+  .config-toggle{
+    font-size:12px; color:var(--muted); cursor:pointer; margin-bottom:14px;
+    display:flex; align-items:center; gap:6px; user-select:none;
+  }
+  .config-toggle:hover{color:var(--text);}
+  .config-body{display:none; margin-top:4px;}
+  .config-body.open{display:block;}
+
+  .log{display:flex; flex-direction:column; gap:10px; max-height:420px; overflow-y:auto;}
+  .log-empty{color:var(--muted); font-size:13px; padding:20px 0; text-align:center;}
+  .log-entry{
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:7px;
+    padding:12px 14px;
+    font-size:12.5px;
+  }
+  .log-entry .lt{color:var(--muted); font-family:'IBM Plex Mono', monospace; font-size:11px; margin-bottom:4px;}
+  .log-entry .ld{font-family:'IBM Plex Mono', monospace; color:var(--text); word-break:break-all;}
+  .log-entry .lb{display:inline-block; margin-top:6px; padding:2px 8px; border-radius:10px; font-size:10.5px; background:rgba(53,212,160,0.12); color:var(--confirm);}
+
+  .footnote{font-size:11.5px; color:#4E5C74; line-height:1.6; margin-top:18px;}
+  .footnote code{color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brandmark">TAKEDOWN<span>.CONSOLE</span></div>
+    <div class="case-ticker" id="caseTicker">CASE #—— · HAZIR</div>
+  </div>
+
+  <div class="grid">
+
+    <!-- SOL: INTAKE FORM -->
+    <div class="panel">
+      <h2><span class="dot"></span>Yeni Şikayet</h2>
+
+      <div class="field">
+        <label for="domains">Şikayet edilecek domain(ler)</label>
+        <textarea id="domains" placeholder="superbetin2183.com&#10;betsat1605.cam&#10;tr.turkbetkacoldugir.com"></textarea>
+        <div class="hint">Virgülle veya alt alta yazabilirsin. Tam URL yapıştırırsan otomatik domaine indirgenir.</div>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label for="brand">Marka</label>
+          <select id="brand">
+            <option value="auto">Otomatik tespit et</option>
+            <option value="superbetin">Superbetin</option>
+            <option value="betsat">Betsat</option>
+            <option value="turkbet">Turkbet</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="activeOverride">Güncel resmi site adresi (opsiyonel)</label>
+          <input type="text" id="activeOverride" placeholder="betsat1610.com">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="reporterEmail">Bu şikayette "biz" olarak görünecek e-posta (opsiyonel)</label>
+        <input type="text" id="reporterEmail" placeholder="support@betsat.com">
+        <div class="hint">Netcraft formundaki "kim bildiriyor" alanını ve giden maillerin Reply-To adresini belirler. Boş bırakırsan markanın kendi maili kullanılır (ör. betsat için support@betsat.com).</div>
+      </div>
+
+      <div class="field">
+        <label>Hedef kanallar</label>
+        <div class="channels" id="channels">
+          <label class="channel active" data-target="nicenic"><input type="checkbox" checked><span class="node"></span>NiceNIC</label>
+          <label class="channel active" data-target="host"><input type="checkbox" checked><span class="node"></span>Host (NS tespiti)</label>
+          <label class="channel" data-target="custom_email"><input type="checkbox"><span class="node"></span>Ek alıcı (host bulunamazsa)</label>
+          <label class="channel active" data-target="netcraft"><input type="checkbox" checked><span class="node"></span>Netcraft</label>
+          <label class="channel active" data-target="safebrowsing"><input type="checkbox" checked><span class="node"></span>Safe Browsing</label>
+          <label class="channel active" data-target="googlespam"><input type="checkbox" checked><span class="node"></span>Google Spam</label>
+          <label class="channel active" data-target="smartscreen"><input type="checkbox" checked><span class="node"></span>SmartScreen</label>
+          <label class="channel active" data-target="spam404"><input type="checkbox" checked><span class="node"></span>Spam404</label>
+        </div>
+      </div>
+
+      <div class="field" id="customEmailField" style="display:none;">
+        <label for="customEmail">Şikayetin gönderileceği ek adres</label>
+        <input type="text" id="customEmail" placeholder="abuse@ornekhost.com, security@ornekhost.com">
+        <div class="hint">Bu, tam bir şikayet mailinin GÖNDERİLECEĞİ adrestir — host otomatik tespit edilemediğinde veya bildiğin bir adrese ekstra göndermek istediğinde kullan.</div>
+      </div>
+
+      <div class="field">
+        <label for="notes">Ek not (opsiyonel)</label>
+        <input type="text" id="notes" placeholder="Örn: aynı cluster'daki 4. domain, hesap incelemesi talep et">
+      </div>
+
+      <div class="config-toggle" id="configToggle">
+        <span id="configArrow">▸</span> GitHub bağlantı ayarları
+      </div>
+      <div class="config-body" id="configBody">
+        <div class="row2">
+          <div class="field">
+            <label for="repo">Repo (owner/name)</label>
+            <input type="text" id="repo" placeholder="smhozt/poligon-domain-scanner">
+          </div>
+          <div class="field">
+            <label for="workflowFile">Workflow dosya adı</label>
+            <input type="text" id="workflowFile" placeholder="manual-complaint.yml">
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label for="branch">Branch</label>
+            <input type="text" id="branch" placeholder="main">
+          </div>
+          <div class="field">
+            <label for="pat">Personal Access Token</label>
+            <input type="password" id="pat" placeholder="ghp_...">
+          </div>
+        </div>
+        <div class="hint">
+          PAT sadece bu repo için <b>Actions: Read and write</b> izniyle, fine-grained token olarak oluşturulmalı — süresi olan, tek repo'ya kısıtlı bir token kullan. Bu sayfa token'ı hiçbir sunucuya göndermez, sadece GitHub API'ye doğrudan tarayıcından istek atar.
+          <label style="display:inline-flex; align-items:center; gap:6px; margin-top:8px; cursor:pointer; color:var(--muted);">
+            <input type="checkbox" id="rememberPat" style="width:auto;"> Repo/workflow/branch ayarlarını bu cihazda hatırla (token hatırlanmaz)
+          </label>
+        </div>
+      </div>
+
+      <button class="btn" id="dispatchBtn">Şikayeti Gönder →</button>
+      <div class="status" id="statusBox"></div>
+    </div>
+
+    <!-- SAĞ: RELAY + LOG -->
+    <div class="panel">
+      <h2><span class="dot"></span>Kanal Durumu</h2>
+      <div class="relay" id="relay"></div>
+
+      <h2 style="margin-top:24px;"><span class="dot"></span>Gönderim Geçmişi</h2>
+      <div class="log" id="log">
+        <div class="log-empty">Henüz gönderim yok. İlk şikayetini gönderdiğinde burada görünecek.</div>
+      </div>
+      <div class="footnote">
+        Panel, GitHub Actions <code>workflow_dispatch</code> event'ini tetikler. Gerçek gönderim sonucu (mail atıldı mı, hangi host bulundu vb.) birkaç saniye içinde <b>Telegram</b>'a düşer — bu panel sadece tetikleme onayını gösterir, iş GitHub Actions üzerinde asenkron çalışır.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const CHANNEL_LABELS = {
+  nicenic: "NICENIC", host: "HOST", custom_email: "MAIL",
+  netcraft: "NETCRAFT", safebrowsing: "SAFEBR", googlespam: "GSPAM",
+  smartscreen: "SMARTSC", spam404: "SPAM404"
+};
+
+let caseCounter = 0;
+
+function buildRelay(activeTargets){
+  const relay = document.getElementById('relay');
+  relay.innerHTML = '';
+  const keys = Object.keys(CHANNEL_LABELS);
+  keys.forEach((key, i) => {
+    const node = document.createElement('div');
+    node.className = 'relay-node';
+    const dot = document.createElement('div');
+    dot.className = 'relay-dot' + (activeTargets.includes(key) ? ' lit' : '');
+    dot.id = 'relay-dot-' + key;
+    const label = document.createElement('div');
+    label.className = 'relay-label';
+    label.textContent = CHANNEL_LABELS[key];
+    node.appendChild(dot);
+    node.appendChild(label);
+    relay.appendChild(node);
+    if(i < keys.length - 1){
+      const line = document.createElement('div');
+      line.className = 'relay-line';
+      relay.appendChild(line);
+    }
+  });
+}
+
+function getActiveTargets(){
+  return Array.from(document.querySelectorAll('.channel.active')).map(el => el.dataset.target);
+}
+
+function refreshChannelUI(){
+  document.querySelectorAll('.channel').forEach(ch => {
+    const cb = ch.querySelector('input');
+    ch.classList.toggle('active', cb.checked);
+  });
+  buildRelay(getActiveTargets());
+  document.getElementById('customEmailField').style.display =
+    getActiveTargets().includes('custom_email') ? 'block' : 'none';
+}
+
+document.querySelectorAll('.channel').forEach(ch => {
+  ch.addEventListener('click', (e) => {
+    e.preventDefault();
+    const cb = ch.querySelector('input');
+    cb.checked = !cb.checked;
+    refreshChannelUI();
+  });
+});
+
+document.getElementById('configToggle').addEventListener('click', () => {
+  const body = document.getElementById('configBody');
+  const arrow = document.getElementById('configArrow');
+  const open = body.classList.toggle('open');
+  arrow.textContent = open ? '▾' : '▸';
+});
+
+async function loadSavedConfig(){
+  try{
+    const result = await window.storage.get('github-config', false);
+    if(result && result.value){
+      const cfg = JSON.parse(result.value);
+      document.getElementById('repo').value = cfg.repo || '';
+      document.getElementById('workflowFile').value = cfg.workflowFile || '';
+      document.getElementById('branch').value = cfg.branch || 'main';
+      document.getElementById('rememberPat').checked = true;
+    }
+  }catch(e){ /* kayıtlı ayar yok, normal */ }
+}
+
+async function loadLog(){
+  try{
+    const result = await window.storage.get('dispatch-log', false);
+    if(result && result.value){
+      const entries = JSON.parse(result.value);
+      renderLog(entries);
+      caseCounter = entries.length;
+    }
+  }catch(e){ /* log yok, normal */ }
+  updateTicker();
+}
+
+function updateTicker(){
+  document.getElementById('caseTicker').textContent =
+    'CASE #' + String(caseCounter).padStart(4,'0') + ' · HAZIR';
+}
+
+function renderLog(entries){
+  const log = document.getElementById('log');
+  if(!entries.length){
+    log.innerHTML = '<div class="log-empty">Henüz gönderim yok. İlk şikayetini gönderdiğinde burada görünecek.</div>';
+    return;
+  }
+  log.innerHTML = entries.slice().reverse().slice(0, 20).map(e => (
+    '<div class="log-entry">' +
+      '<div class="lt">' + e.time + '</div>' +
+      '<div class="ld">' + e.domains + '</div>' +
+      '<span class="lb">' + e.targets.length + ' kanala gönderildi</span>' +
+    '</div>'
+  )).join('');
+}
+
+async function saveLogEntry(entry){
+  let entries = [];
+  try{
+    const result = await window.storage.get('dispatch-log', false);
+    if(result && result.value) entries = JSON.parse(result.value);
+  }catch(e){}
+  entries.push(entry);
+  if(entries.length > 100) entries = entries.slice(-100);
+  try{
+    await window.storage.set('dispatch-log', JSON.stringify(entries), false);
+  }catch(e){ console.error('log kaydedilemedi', e); }
+  caseCounter = entries.length;
+  renderLog(entries);
+  updateTicker();
+}
+
+async function saveConfigIfRemembered(){
+  if(document.getElementById('rememberPat').checked){
+    const cfg = {
+      repo: document.getElementById('repo').value.trim(),
+      workflowFile: document.getElementById('workflowFile').value.trim(),
+      branch: document.getElementById('branch').value.trim() || 'main',
+    };
+    try{ await window.storage.set('github-config', JSON.stringify(cfg), false); }catch(e){}
+  }
+}
+
+function showStatus(type, text){
+  const box = document.getElementById('statusBox');
+  box.className = 'status show ' + type;
+  box.textContent = text;
+}
+
+function markRelaySent(targets){
+  targets.forEach(t => {
+    const dot = document.getElementById('relay-dot-' + t);
+    if(dot){ dot.classList.remove('lit'); dot.classList.add('sent'); }
+  });
+  setTimeout(() => {
+    targets.forEach(t => {
+      const dot = document.getElementById('relay-dot-' + t);
+      if(dot){ dot.classList.remove('sent'); dot.classList.add('lit'); }
+    });
+  }, 2200);
+}
+
+document.getElementById('dispatchBtn').addEventListener('click', async () => {
+  const domains = document.getElementById('domains').value.trim();
+  const brand = document.getElementById('brand').value;
+  const activeOverride = document.getElementById('activeOverride').value.trim();
+  const reporterEmail = document.getElementById('reporterEmail').value.trim();
+  const notes = document.getElementById('notes').value.trim();
+  const customEmail = document.getElementById('customEmail').value.trim();
+  const targets = getActiveTargets();
+
+  const repo = document.getElementById('repo').value.trim();
+  const workflowFile = document.getElementById('workflowFile').value.trim();
+  const branch = document.getElementById('branch').value.trim() || 'main';
+  const pat = document.getElementById('pat').value.trim();
+
+  if(!domains){ showStatus('err', 'En az bir domain girmelisin.'); return; }
+  if(!targets.length){ showStatus('err', 'En az bir hedef kanal seçmelisin.'); return; }
+  if(targets.includes('custom_email') && !customEmail){
+    showStatus('err', 'Özel e-posta kanalını seçtin ama adres girmedin.'); return;
+  }
+  if(!repo || !workflowFile || !pat){
+    showStatus('err', 'GitHub bağlantı ayarlarını (repo / workflow dosyası / token) doldurmalısın.');
+    document.getElementById('configBody').classList.add('open');
+    document.getElementById('configArrow').textContent = '▾';
+    return;
+  }
+
+  const btn = document.getElementById('dispatchBtn');
+  btn.disabled = true;
+  showStatus('pending', 'GitHub Actions tetikleniyor…');
+
+  const inputs = {
+    domains: domains.replace(/\n/g, ','),
+    brand: brand,
+    targets: targets.join(','),
+    custom_email: customEmail,
+    reporter_email: reporterEmail,
+    active_override: activeOverride,
+    notes: notes,
+  };
+
+  try{
+    const resp = await fetch('https://api.github.com/repos/' + repo + '/actions/workflows/' + workflowFile + '/dispatches', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + pat,
+        'Accept': 'application/vnd.github+json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ ref: branch, inputs: inputs }),
+    });
+
+    if(resp.status === 204){
+      showStatus('ok', '✓ Tetiklendi. Sonuç birkaç saniye içinde Telegram\'a düşecek.');
+      markRelaySent(targets);
+      await saveLogEntry({
+        time: new Date().toLocaleString('tr-TR'),
+        domains: domains.replace(/\n/g, ', '),
+        targets: targets,
+      });
+      await saveConfigIfRemembered();
+    } else {
+      const errText = await resp.text();
+      showStatus('err', 'GitHub API hatası (' + resp.status + '): ' + errText.slice(0,200));
+    }
+  } catch(e){
+    showStatus('err', 'İstek gönderilemedi — CORS engeli veya ağ hatası olabilir: ' + e.message);
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+refreshChannelUI();
+loadSavedConfig();
+loadLog();
+</script>
+</body>
+</html>
