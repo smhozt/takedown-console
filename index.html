@@ -164,8 +164,37 @@
   .config-body{display:none; margin-top:4px;}
   .config-body.open{display:block;}
 
-  .log{display:flex; flex-direction:column; gap:10px; max-height:420px; overflow-y:auto;}
+  .log{display:flex; flex-direction:column; gap:10px; max-height:380px; overflow-y:auto;}
   .log-empty{color:var(--muted); font-size:13px; padding:20px 0; text-align:center;}
+
+  .log-stats{
+    display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap;
+  }
+  .log-stat{
+    flex:1; min-width:90px;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:7px;
+    padding:10px 12px;
+  }
+  .log-stat .num{font-family:'Space Grotesk', sans-serif; font-size:20px; font-weight:700; color:var(--text);}
+  .log-stat .lbl{font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; margin-top:2px;}
+
+  .log-search{
+    width:100%;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    color:var(--text);
+    border-radius:7px;
+    padding:9px 12px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    outline:none;
+    margin-bottom:12px;
+  }
+  .log-search:focus{border-color:var(--signal);}
+  .log-search::placeholder{color:#4E5C74;}
+
   .log-entry{
     background:var(--panel-2);
     border:1px solid var(--line);
@@ -173,9 +202,45 @@
     padding:12px 14px;
     font-size:12.5px;
   }
-  .log-entry .lt{color:var(--muted); font-family:'IBM Plex Mono', monospace; font-size:11px; margin-bottom:4px;}
-  .log-entry .ld{font-family:'IBM Plex Mono', monospace; color:var(--text); word-break:break-all;}
-  .log-entry .lb{display:inline-block; margin-top:6px; padding:2px 8px; border-radius:10px; font-size:10.5px; background:rgba(53,212,160,0.12); color:var(--confirm);}
+  .log-entry .lt{color:var(--muted); font-family:'IBM Plex Mono', monospace; font-size:11px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;}
+  .log-entry .lt .case-num{color:#5B6980;}
+  .log-domains{display:flex; flex-wrap:wrap; gap:5px; margin-bottom:8px;}
+  .log-domain-chip{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    background:rgba(255,138,61,0.08);
+    border:1px solid rgba(255,138,61,0.25);
+    color:var(--text);
+    padding:3px 8px;
+    border-radius:4px;
+  }
+  .log-channels{display:flex; flex-wrap:wrap; gap:5px;}
+  .log-channel-badge{
+    font-size:10px;
+    letter-spacing:0.03em;
+    background:rgba(53,212,160,0.1);
+    color:var(--confirm);
+    border:1px solid rgba(53,212,160,0.25);
+    padding:2px 7px;
+    border-radius:10px;
+    text-transform:uppercase;
+  }
+
+  .log-actions{display:flex; justify-content:space-between; align-items:center; margin-top:14px; gap:10px; flex-wrap:wrap;}
+
+  .btn-ghost{
+    background:transparent;
+    color:var(--muted);
+    border:1px solid var(--line);
+    font-family:'Inter', sans-serif;
+    font-weight:500;
+    font-size:12px;
+    padding:8px 13px;
+    border-radius:6px;
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .btn-ghost:hover{border-color:var(--signal); color:var(--text);}
 
   .footnote{font-size:11.5px; color:#4E5C74; line-height:1.6; margin-top:18px;}
   .footnote code{color:var(--muted);}
@@ -290,11 +355,22 @@
       <div class="relay" id="relay"></div>
 
       <h2 style="margin-top:24px;"><span class="dot"></span>Gönderim Geçmişi</h2>
+
+      <div class="log-stats" id="logStats"></div>
+
+      <input type="text" id="logSearch" placeholder="Domain ara..." class="log-search">
+
       <div class="log" id="log">
         <div class="log-empty">Henüz gönderim yok. İlk şikayetini gönderdiğinde burada görünecek.</div>
       </div>
+
+      <div class="log-actions">
+        <button class="btn-ghost" id="exportLogBtn">↓ Geçmişi Dışa Aktar (.csv)</button>
+        <a class="btn-ghost" id="actionsLink" href="#" target="_blank" rel="noopener" style="display:none; text-decoration:none;">GitHub Actions'ta Görüntüle →</a>
+      </div>
+
       <div class="footnote">
-        Panel, GitHub Actions <code>workflow_dispatch</code> event'ini tetikler. Gerçek gönderim sonucu (mail atıldı mı, hangi host bulundu vb.) birkaç saniye içinde <b>Telegram</b>'a düşer — bu panel sadece tetikleme onayını gösterir, iş GitHub Actions üzerinde asenkron çalışır.
+        Panel, GitHub Actions <code>workflow_dispatch</code> event'ini tetikler. Gerçek gönderim sonucu (mail atıldı mı, hangi host bulundu vb.) birkaç saniye içinde <b>Telegram</b>'a düşer — bu panel sadece tetikleme onayını gösterir, iş GitHub Actions üzerinde asenkron çalışır. Geçmiş bu tarayıcıda kalıcı olarak saklanır (son 100 kayıt).
       </div>
     </div>
 
@@ -377,16 +453,20 @@ async function loadSavedConfig(){
   }catch(e){ /* kayıtlı ayar yok, normal */ }
 }
 
+let _allLogEntries = [];
+
 async function loadLog(){
   try{
     const raw = localStorage.getItem('dispatch-log');
     if(raw){
-      const entries = JSON.parse(raw);
-      renderLog(entries);
-      caseCounter = entries.length;
+      _allLogEntries = JSON.parse(raw);
+      caseCounter = _allLogEntries.length;
     }
   }catch(e){ /* log yok, normal */ }
+  renderLog(_allLogEntries);
+  renderStats(_allLogEntries);
   updateTicker();
+  updateActionsLink();
 }
 
 function updateTicker(){
@@ -394,20 +474,84 @@ function updateTicker(){
     'CASE #' + String(caseCounter).padStart(4,'0') + ' · HAZIR';
 }
 
-function renderLog(entries){
+function updateActionsLink(){
+  const repo = document.getElementById('repo').value.trim();
+  const link = document.getElementById('actionsLink');
+  if(repo){
+    link.href = 'https://github.com/' + repo + '/actions';
+    link.style.display = 'inline-block';
+  } else {
+    link.style.display = 'none';
+  }
+}
+
+function renderStats(entries){
+  const statsBox = document.getElementById('logStats');
+  const totalDispatches = entries.length;
+  const totalDomains = entries.reduce((sum, e) => sum + e.domains.split(',').length, 0);
+  const today = new Date().toLocaleDateString('tr-TR');
+  const todayCount = entries.filter(e => e.time.startsWith(today)).length;
+
+  statsBox.innerHTML = `
+    <div class="log-stat"><div class="num">${totalDispatches}</div><div class="lbl">Toplam Gönderim</div></div>
+    <div class="log-stat"><div class="num">${totalDomains}</div><div class="lbl">Toplam Domain</div></div>
+    <div class="log-stat"><div class="num">${todayCount}</div><div class="lbl">Bugün</div></div>
+  `;
+}
+
+function renderLog(entries, filterText){
   const log = document.getElementById('log');
-  if(!entries.length){
-    log.innerHTML = '<div class="log-empty">Henüz gönderim yok. İlk şikayetini gönderdiğinde burada görünecek.</div>';
+  let filtered = entries;
+  if(filterText){
+    const f = filterText.toLowerCase();
+    filtered = entries.filter(e => e.domains.toLowerCase().includes(f));
+  }
+  if(!filtered.length){
+    log.innerHTML = '<div class="log-empty">' +
+      (filterText ? 'Eşleşen kayıt yok.' : 'Henüz gönderim yok. İlk şikayetini gönderdiğinde burada görünecek.') +
+      '</div>';
     return;
   }
-  log.innerHTML = entries.slice().reverse().slice(0, 20).map(e => (
-    '<div class="log-entry">' +
-      '<div class="lt">' + e.time + '</div>' +
-      '<div class="ld">' + e.domains + '</div>' +
-      '<span class="lb">' + e.targets.length + ' kanala gönderildi</span>' +
-    '</div>'
-  )).join('');
+  const reversed = entries.slice().reverse();
+  log.innerHTML = filtered.slice().reverse().slice(0, 30).map(e => {
+    const caseNum = entries.indexOf(e) + 1;
+    const domainChips = e.domains.split(',').map(d =>
+      '<span class="log-domain-chip">' + d.trim() + '</span>'
+    ).join('');
+    const channelBadges = e.targets.map(t =>
+      '<span class="log-channel-badge">' + (CHANNEL_LABELS[t] || t) + '</span>'
+    ).join('');
+    return (
+      '<div class="log-entry">' +
+        '<div class="lt"><span>' + e.time + '</span><span class="case-num">#' + String(caseNum).padStart(4,'0') + '</span></div>' +
+        '<div class="log-domains">' + domainChips + '</div>' +
+        '<div class="log-channels">' + channelBadges + '</div>' +
+      '</div>'
+    );
+  }).join('');
 }
+
+document.getElementById('logSearch').addEventListener('input', (e) => {
+  renderLog(_allLogEntries, e.target.value.trim());
+});
+
+document.getElementById('exportLogBtn').addEventListener('click', () => {
+  if(!_allLogEntries.length){ return; }
+  const rows = [['Tarih/Saat', 'Domainler', 'Kanallar']];
+  _allLogEntries.forEach(e => {
+    rows.push([e.time, e.domains, e.targets.join(' | ')]);
+  });
+  const csv = rows.map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'takedown-gecmisi-' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById('repo').addEventListener('input', updateActionsLink);
 
 async function saveLogEntry(entry){
   let entries = [];
@@ -420,8 +564,11 @@ async function saveLogEntry(entry){
   try{
     localStorage.setItem('dispatch-log', JSON.stringify(entries));
   }catch(e){ console.error('log kaydedilemedi', e); }
+  _allLogEntries = entries;
   caseCounter = entries.length;
+  document.getElementById('logSearch').value = '';
   renderLog(entries);
+  renderStats(entries);
   updateTicker();
 }
 
@@ -579,6 +726,7 @@ refreshChannelUI();
 wireAutoSave();
 loadSavedConfig();
 loadLog();
+updateActionsLink();
 </script>
 </body>
 </html>
