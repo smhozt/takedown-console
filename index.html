@@ -133,18 +133,36 @@
   .status.err{background:rgba(255,93,93,0.1); border:1px solid rgba(255,93,93,0.35); color:var(--danger);}
   .status.pending{background:rgba(255,138,61,0.08); border:1px solid rgba(255,138,61,0.3); color:var(--signal);}
 
+  .status-strip{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:16px 22px;
+    margin-bottom:20px;
+  }
+  .status-strip h2{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:13px;
+    font-weight:500;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin:0 0 12px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .status-strip h2 .dot{width:6px; height:6px; border-radius:50%; background:var(--signal); display:inline-block;}
   .relay{
     display:flex;
-    align-items:center;
-    gap:0;
-    margin:4px 0 20px;
-    overflow-x:auto;
-    padding-bottom:4px;
+    flex-wrap:wrap;
+    align-items:flex-start;
+    row-gap:14px;
+    column-gap:0;
   }
   .relay-node{
     display:flex; flex-direction:column; align-items:center; gap:6px;
-    min-width:64px;
-    flex-shrink:0;
+    min-width:76px;
+    flex:1 1 76px;
+    max-width:110px;
   }
   .relay-dot{
     width:14px; height:14px; border-radius:50%;
@@ -153,8 +171,11 @@
   }
   .relay-dot.lit{background:var(--signal); border-color:var(--signal); box-shadow:0 0 12px rgba(255,138,61,0.8);}
   .relay-dot.sent{background:var(--confirm); border-color:var(--confirm); box-shadow:0 0 12px rgba(53,212,160,0.8);}
-  .relay-label{font-size:10px; color:var(--muted); text-align:center; letter-spacing:0.02em;}
-  .relay-line{height:2px; flex:1; background:var(--line); min-width:16px; margin-top:-20px;}
+  .relay-label{font-size:10px; color:var(--muted); text-align:center; letter-spacing:0.02em; white-space:nowrap;}
+  .relay-line{
+    height:2px; background:var(--line); flex:1 1 24px; min-width:12px;
+    margin-top:6px; align-self:flex-start;
+  }
 
   .config-toggle{
     font-size:12px; color:var(--muted); cursor:pointer; margin-bottom:14px;
@@ -254,6 +275,11 @@
     <div class="case-ticker" id="caseTicker">CASE #—— · HAZIR</div>
   </div>
 
+  <div class="status-strip">
+    <h2><span class="dot"></span>Kanal Durumu</h2>
+    <div class="relay" id="relay"></div>
+  </div>
+
   <div class="grid">
 
     <!-- SOL: INTAKE FORM -->
@@ -350,12 +376,9 @@
       <div class="status" id="statusBox"></div>
     </div>
 
-    <!-- SAĞ: RELAY + LOG -->
+    <!-- SAĞ: GÖNDERİM GEÇMİŞİ -->
     <div class="panel">
-      <h2><span class="dot"></span>Kanal Durumu</h2>
-      <div class="relay" id="relay"></div>
-
-      <h2 style="margin-top:24px;"><span class="dot"></span>Gönderim Geçmişi</h2>
+      <h2><span class="dot"></span>Gönderim Geçmişi</h2>
 
       <div class="log-stats" id="logStats"></div>
 
