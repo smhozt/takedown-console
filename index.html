@@ -294,6 +294,7 @@
           <label class="channel active" data-target="nicenic"><input type="checkbox" checked><span class="node"></span>NiceNIC</label>
           <label class="channel active" data-target="host"><input type="checkbox" checked><span class="node"></span>Host (NS tespiti)</label>
           <label class="channel" data-target="custom_email"><input type="checkbox"><span class="node"></span>Ek alıcı (host bulunamazsa)</label>
+          <label class="channel" data-target="compromise_notice"><input type="checkbox"><span class="node"></span>⚠️ Hacklenmiş 3. Taraf Site Bildirimi</label>
           <label class="channel active" data-target="netcraft"><input type="checkbox" checked><span class="node"></span>Netcraft</label>
           <label class="channel active" data-target="safebrowsing"><input type="checkbox" checked><span class="node"></span>Safe Browsing</label>
           <label class="channel active" data-target="googlespam"><input type="checkbox" checked><span class="node"></span>Google Spam</label>
@@ -379,7 +380,7 @@
 
 <script>
 const CHANNEL_LABELS = {
-  nicenic: "NICENIC", host: "HOST", custom_email: "MAIL",
+  nicenic: "NICENIC", host: "HOST", custom_email: "MAIL", compromise_notice: "HACK-BİLDİRİM",
   netcraft: "NETCRAFT", safebrowsing: "SAFEBR", googlespam: "GSPAM",
   smartscreen: "SMARTSC", spam404: "SPAM404"
 };
@@ -420,8 +421,15 @@ function refreshChannelUI(){
     ch.classList.toggle('active', cb.checked);
   });
   buildRelay(getActiveTargets());
-  document.getElementById('customEmailField').style.display =
-    getActiveTargets().includes('custom_email') ? 'block' : 'none';
+  const active = getActiveTargets();
+  const needsEmail = active.includes('custom_email') || active.includes('compromise_notice');
+  document.getElementById('customEmailField').style.display = needsEmail ? 'block' : 'none';
+  const emailLabel = document.querySelector('#customEmailField label');
+  if(emailLabel){
+    emailLabel.textContent = active.includes('compromise_notice')
+      ? 'Hacklenmiş site sahibinin iletişim adresi'
+      : 'Şikayetin gönderileceği ek adres';
+  }
 }
 
 document.querySelectorAll('.channel').forEach(ch => {
@@ -668,6 +676,9 @@ document.getElementById('dispatchBtn').addEventListener('click', async () => {
   if(!targets.length){ showStatus('err', 'En az bir hedef kanal seçmelisin.'); return; }
   if(targets.includes('custom_email') && !customEmail){
     showStatus('err', 'Özel e-posta kanalını seçtin ama adres girmedin.'); return;
+  }
+  if(targets.includes('compromise_notice') && !customEmail){
+    showStatus('err', 'Hacklenmiş site bildirimi için site sahibinin e-posta adresini girmelisin.'); return;
   }
   if(!repo || !workflowFile || !pat){
     showStatus('err', 'GitHub bağlantı ayarlarını (repo / workflow dosyası / token) doldurmalısın.');
