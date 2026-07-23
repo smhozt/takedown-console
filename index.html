@@ -751,23 +751,28 @@ function renderUnknownClusters(){
     container.innerHTML = '<div class="log-empty">Henüz bilinmeyen cluster yok.</div>';
     return;
   }
-  container.innerHTML = list.map(item => (
-    '<div class="unknown-cluster-item"><span>' + item.domain +
-    (item.cluster ? ' — cluster: ' + item.cluster : ' — cluster tespit edilemedi') +
-    '</span></div>'
-  )).join('');
+  container.innerHTML = list.map(item => {
+    let nsInfo;
+    if(item.observedNs && item.observedNs.length){
+      nsInfo = ' — gözlemlenen NS: ' + item.observedNs.join('/');
+    } else {
+      nsInfo = ' — DNS sorgusu başarısız oldu (geçici olabilir, tekrar dene)';
+    }
+    return '<div class="unknown-cluster-item"><span>' + item.domain + nsInfo + '</span></div>';
+  }).join('');
 }
-function addUnknownCluster(domain, cluster){
+function addUnknownCluster(domain, observedNs){
   const list = loadUnknownClusters();
-  if(list.some(i => i.domain === domain)) return;
-  list.push({domain, cluster: cluster || null, addedAt: new Date().toLocaleString('tr-TR')});
+  const existing = list.findIndex(i => i.domain === domain);
+  const entry = {domain, observedNs: observedNs || null, addedAt: new Date().toLocaleString('tr-TR')};
+  if(existing !== -1) list[existing] = entry; else list.push(entry);
   try{ localStorage.setItem('unknown-clusters', JSON.stringify(list)); }catch(e){}
   renderUnknownClusters();
 }
 document.getElementById('copyUnknownClustersBtn').addEventListener('click', () => {
   const list = loadUnknownClusters();
   if(!list.length) return;
-  const text = list.map(i => i.domain + (i.cluster ? ' (cluster: ' + i.cluster + ')' : ' (cluster tespit edilemedi)')).join('\n');
+  const text = list.map(i => i.domain + (i.observedNs && i.observedNs.length ? ' (gözlemlenen NS: ' + i.observedNs.join('/') + ')' : ' (DNS sorgusu başarısız oldu)')).join('\n');
   navigator.clipboard.writeText(text).then(() => {
     showStatus('ok', '✓ Bilinmeyen cluster listesi panoya kopyalandı.');
   }).catch(() => {});
@@ -1047,7 +1052,7 @@ function renderResultsDetail(resultsJson){
   // Bilinmeyen cluster'ları otomatik takip listesine ekle
   resultsJson.domains.forEach(d => {
     if(d.host && d.host.status === 'unknown_cluster'){
-      addUnknownCluster(d.domain, d.host.cluster);
+      addUnknownCluster(d.domain, d.host.observed_ns);
     }
   });
 }
