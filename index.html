@@ -31,15 +31,12 @@
     min-height:100vh;
   }
   .wrap{max-width:1100px; margin:0 auto; padding:32px 20px 80px;}
-
   .topbar{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:12px;}
   .brandmark{font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:22px; letter-spacing:0.02em;}
   .brandmark span{color:var(--signal);}
   .case-ticker{font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--muted); letter-spacing:0.04em;}
-
   .grid{display:grid; grid-template-columns: 1.15fr 0.85fr; gap:20px;}
   @media (max-width: 860px){ .grid{grid-template-columns: 1fr;} }
-
   .panel{
     background:var(--panel);
     border:1px solid var(--line);
@@ -57,7 +54,6 @@
     display:flex; align-items:center; gap:8px;
   }
   .panel h2 .dot{width:6px; height:6px; border-radius:50%; background:var(--signal); display:inline-block;}
-
   label{display:block; font-size:12.5px; color:var(--muted); margin:0 0 6px; letter-spacing:0.01em;}
   .field{margin-bottom:16px;}
   textarea, input[type="text"], input[type="password"], select{
@@ -76,9 +72,7 @@
   textarea:focus, input:focus, select:focus{border-color:var(--signal);}
   textarea{min-height:88px; resize:vertical; line-height:1.5;}
   select{font-family:'Inter', sans-serif; appearance:none; background-image:linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 18px) calc(50% - 3px), calc(100% - 13px) calc(50% - 3px); background-size:5px 5px, 5px 5px; background-repeat:no-repeat;}
-
   .hint{font-size:11.5px; color:#5B6980; margin-top:5px; line-height:1.4;}
-
   .channels{display:flex; flex-wrap:wrap; gap:8px;}
   .channel{
     display:flex; align-items:center; gap:7px;
@@ -96,10 +90,8 @@
   .channel .node{width:8px; height:8px; border-radius:50%; background:#3A4863; transition:all .15s ease; flex-shrink:0;}
   .channel.active{border-color:var(--signal); color:var(--text); background:rgba(255,138,61,0.08);}
   .channel.active .node{background:var(--signal); box-shadow:0 0 8px rgba(255,138,61,0.7);}
-
   .row2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
   @media (max-width:600px){ .row2{grid-template-columns:1fr;} }
-
   .btn{
     width:100%;
     background:var(--signal);
@@ -118,7 +110,6 @@
   .btn:hover{filter:brightness(1.08);}
   .btn:active{transform:scale(0.99);}
   .btn:disabled{opacity:0.5; cursor:not-allowed;}
-
   .status{
     margin-top:14px;
     padding:12px 14px;
@@ -132,7 +123,6 @@
   .status.ok{background:rgba(53,212,160,0.1); border:1px solid rgba(53,212,160,0.35); color:var(--confirm);}
   .status.err{background:rgba(255,93,93,0.1); border:1px solid rgba(255,93,93,0.35); color:var(--danger);}
   .status.pending{background:rgba(255,138,61,0.08); border:1px solid rgba(255,138,61,0.3); color:var(--signal);}
-
   .status-strip{
     background:var(--panel);
     border:1px solid var(--line);
@@ -176,7 +166,6 @@
     height:2px; background:var(--line); flex:1 1 24px; min-width:12px;
     margin-top:6px; align-self:flex-start;
   }
-
   .config-toggle{
     font-size:12px; color:var(--muted); cursor:pointer; margin-bottom:14px;
     display:flex; align-items:center; gap:6px; user-select:none;
@@ -184,7 +173,6 @@
   .config-toggle:hover{color:var(--text);}
   .config-body{display:none; margin-top:4px;}
   .config-body.open{display:block;}
-
   .duplicate-warning{
     display:none;
     margin-top:8px;
@@ -197,7 +185,6 @@
     color:var(--signal);
   }
   .duplicate-warning.show{display:block;}
-
   .pre-estimate{
     font-size:11.5px;
     color:var(--muted);
@@ -205,7 +192,6 @@
     margin-top:10px;
     min-height:14px;
   }
-
   .results-detail{margin-top:14px;}
   .results-domain{
     background:var(--panel-2);
@@ -232,7 +218,6 @@
   .rd-chip.fail{background:rgba(255,93,93,0.12); color:var(--danger); border:1px solid rgba(255,93,93,0.3);}
   .rd-chip.skip{background:rgba(255,138,61,0.1); color:var(--signal); border:1px solid rgba(255,138,61,0.3);}
   .rd-note{font-size:10.5px; color:var(--muted); margin-top:6px; line-height:1.4;}
-
   .wide-section{margin-top:16px;}
   .badge-count{
     background:var(--signal);
@@ -244,7 +229,6 @@
     margin-left:4px;
   }
   .badge-count:empty{display:none;}
-
   .unknown-cluster-list, .cluster-ref-list{
     display:flex; flex-direction:column; gap:6px;
     max-height:280px; overflow-y:auto;
@@ -263,10 +247,8 @@
   .cluster-ref-item .cr-host{color:var(--text);}
   .cluster-ref-item .cr-email{font-family:'IBM Plex Mono', monospace; color:var(--muted); font-size:11px; word-break:break-all;}
   @media (max-width:700px){ .cluster-ref-item{grid-template-columns:1fr;} }
-
   .log{display:flex; flex-direction:column; gap:10px; max-height:380px; overflow-y:auto;}
   .log-empty{color:var(--muted); font-size:13px; padding:20px 0; text-align:center;}
-
   .log-stats{
     display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap;
   }
@@ -279,7 +261,6 @@
   }
   .log-stat .num{font-family:'Space Grotesk', sans-serif; font-size:20px; font-weight:700; color:var(--text);}
   .log-stat .lbl{font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; margin-top:2px;}
-
   .log-search{
     width:100%;
     background:var(--panel-2);
@@ -294,7 +275,6 @@
   }
   .log-search:focus{border-color:var(--signal);}
   .log-search::placeholder{color:#4E5C74;}
-
   .log-entry{
     background:var(--panel-2);
     border:1px solid var(--line);
@@ -325,9 +305,7 @@
     border-radius:10px;
     text-transform:uppercase;
   }
-
   .log-actions{display:flex; justify-content:space-between; align-items:center; margin-top:14px; gap:10px; flex-wrap:wrap;}
-
   .btn-ghost{
     background:transparent;
     color:var(--muted);
@@ -341,37 +319,30 @@
     transition:all .15s ease;
   }
   .btn-ghost:hover{border-color:var(--signal); color:var(--text);}
-
   .footnote{font-size:11.5px; color:#4E5C74; line-height:1.6; margin-top:18px;}
   .footnote code{color:var(--muted);}
 </style>
 </head>
 <body>
 <div class="wrap">
-
   <div class="topbar">
     <div class="brandmark">TAKEDOWN<span>.CONSOLE</span></div>
     <div class="case-ticker" id="caseTicker">CASE #—— · HAZIR</div>
   </div>
-
   <div class="status-strip">
     <h2><span class="dot"></span>Kanal Durumu</h2>
     <div class="relay" id="relay"></div>
   </div>
-
   <div class="grid">
-
     <!-- SOL: INTAKE FORM -->
     <div class="panel">
       <h2><span class="dot"></span>Yeni Şikayet</h2>
-
       <div class="field">
         <label for="domains">Şikayet edilecek domain(ler)</label>
         <textarea id="domains" placeholder="superbetin2183.com&#10;betsat1605.cam&#10;tr.turkbetkacoldugir.com"></textarea>
         <div class="hint">Virgülle veya alt alta yazabilirsin. Tam URL yapıştırırsan otomatik domaine indirgenir.</div>
         <div class="duplicate-warning" id="duplicateWarning"></div>
       </div>
-
       <div class="row2">
         <div class="field">
           <label for="brand">Marka</label>
@@ -384,16 +355,14 @@
         </div>
         <div class="field">
           <label for="activeOverride">Güncel resmi site adresi (opsiyonel)</label>
-          <input type="text" id="activeOverride" placeholder="betsat1610.com">
+          <input type="text" id="activeOverride" placeholder="betsat1615.com">
         </div>
       </div>
-
       <div class="field">
         <label for="reporterEmail">Bu şikayette "biz" olarak görünecek e-posta (opsiyonel)</label>
         <input type="text" id="reporterEmail" placeholder="support@betsat.com">
         <div class="hint">Netcraft formundaki "kim bildiriyor" alanını ve giden maillerin Reply-To adresini belirler. Boş bırakırsan markanın kendi maili kullanılır (ör. betsat için support@betsat.com).</div>
       </div>
-
       <div class="field">
         <label>Hedef kanallar</label>
         <div class="channels" id="channels">
@@ -406,20 +375,18 @@
           <label class="channel active" data-target="googlespam"><input type="checkbox" checked><span class="node"></span>Google Spam</label>
           <label class="channel active" data-target="smartscreen"><input type="checkbox" checked><span class="node"></span>SmartScreen</label>
           <label class="channel active" data-target="spam404"><input type="checkbox" checked><span class="node"></span>Spam404</label>
+          <label class="channel active" data-target="spamhaus"><input type="checkbox" checked><span class="node"></span>Spamhaus</label>
         </div>
       </div>
-
       <div class="field" id="customEmailField" style="display:none;">
         <label for="customEmail">Şikayetin gönderileceği ek adres</label>
         <input type="text" id="customEmail" placeholder="abuse@ornekhost.com, security@ornekhost.com">
         <div class="hint">Bu, tam bir şikayet mailinin GÖNDERİLECEĞİ adrestir — host otomatik tespit edilemediğinde veya bildiğin bir adrese ekstra göndermek istediğinde kullan.</div>
       </div>
-
       <div class="field">
         <label for="notes">Ek not (opsiyonel)</label>
         <input type="text" id="notes" placeholder="Örn: aynı cluster'daki 4. domain, hesap incelemesi talep et">
       </div>
-
       <div class="config-toggle" id="configToggle">
         <span id="configArrow">▸</span> GitHub bağlantı ayarları
       </div>
@@ -451,37 +418,28 @@
           </label>
         </div>
       </div>
-
       <div class="pre-estimate" id="preSubmitEstimate"></div>
       <button class="btn" id="dispatchBtn">Şikayeti Gönder →</button>
       <div class="status" id="statusBox"></div>
       <div class="results-detail" id="resultsDetail"></div>
     </div>
-
     <!-- SAĞ: GÖNDERİM GEÇMİŞİ -->
     <div class="panel">
       <h2><span class="dot"></span>Gönderim Geçmişi</h2>
-
       <div class="log-stats" id="logStats"></div>
-
       <input type="text" id="logSearch" placeholder="Domain ara..." class="log-search">
-
       <div class="log" id="log">
         <div class="log-empty">Henüz gönderim yok. İlk şikayetini gönderdiğinde burada görünecek.</div>
       </div>
-
       <div class="log-actions">
         <button class="btn-ghost" id="exportLogBtn">↓ Geçmişi Dışa Aktar (.csv)</button>
         <a class="btn-ghost" id="actionsLink" href="#" target="_blank" rel="noopener" style="display:none; text-decoration:none;">GitHub Actions'ta Görüntüle →</a>
       </div>
-
       <div class="footnote">
         Panel, GitHub Actions <code>workflow_dispatch</code> event'ini tetikler ve ardından gerçek sonucu (mail atıldı mı, hangi host/registrar bulundu vb.) otomatik olarak çekip burada gösterir. Aynı bilgi ayrıca <b>Telegram</b>'a da düşer. Geçmiş bu tarayıcıda kalıcı olarak saklanır (son 100 kayıt).
       </div>
     </div>
-
   </div>
-
   <div class="panel wide-section">
     <div class="config-toggle" id="unknownClusterToggle">
       <span id="unknownClusterArrow">▸</span> Bilinmeyen Cluster Takibi <span class="badge-count" id="unknownClusterCount"></span>
@@ -499,7 +457,6 @@
       </div>
     </div>
   </div>
-
   <div class="panel wide-section">
     <div class="config-toggle" id="clusterRefToggle">
       <span id="clusterRefArrow">▸</span> Bilinen Cluster / Host Referansı
@@ -512,18 +469,14 @@
       <div id="clusterRefList" class="cluster-ref-list"></div>
     </div>
   </div>
-
 </div>
-
 <script>
 const CHANNEL_LABELS = {
   nicenic: "NICENIC", host: "HOST", custom_email: "MAIL", compromise_notice: "HACK-BİLDİRİM",
   netcraft: "NETCRAFT", safebrowsing: "SAFEBR", googlespam: "GSPAM",
-  smartscreen: "SMARTSC", spam404: "SPAM404"
+  smartscreen: "SMARTSC", spam404: "SPAM404", spamhaus: "SPAMHAUS"
 };
-
 let caseCounter = 0;
-
 function buildRelay(activeTargets){
   const relay = document.getElementById('relay');
   relay.innerHTML = '';
@@ -547,11 +500,9 @@ function buildRelay(activeTargets){
     }
   });
 }
-
 function getActiveTargets(){
   return Array.from(document.querySelectorAll('.channel.active')).map(el => el.dataset.target);
 }
-
 function refreshChannelUI(){
   document.querySelectorAll('.channel').forEach(ch => {
     const cb = ch.querySelector('input');
@@ -569,7 +520,6 @@ function refreshChannelUI(){
   }
   updatePreSubmitEstimate();
 }
-
 function getDomainList(){
   const raw = document.getElementById('domains').value.trim();
   if(!raw) return [];
@@ -577,7 +527,6 @@ function getDomainList(){
     .map(d => d.trim()).filter(Boolean)
     .map(d => d.replace(/^https?:\/\//, '').split('/')[0]);
 }
-
 function updatePreSubmitEstimate(){
   const el = document.getElementById('preSubmitEstimate');
   if(!el) return;
@@ -592,7 +541,6 @@ function updatePreSubmitEstimate(){
   const timeStr = seconds < 60 ? Math.round(seconds) + ' sn' : Math.ceil(seconds / 60) + ' dk';
   el.textContent = domains.length + ' domain × ' + targets.length + ' kanal ≈ tahmini ' + timeStr + ' (kaba tahmin)';
 }
-
 function updateDuplicateWarning(){
   const el = document.getElementById('duplicateWarning');
   if(!el) return;
@@ -621,12 +569,10 @@ function updateDuplicateWarning(){
     el.classList.remove('show');
   }
 }
-
 document.getElementById('domains').addEventListener('input', () => {
   updatePreSubmitEstimate();
   updateDuplicateWarning();
 });
-
 document.querySelectorAll('.channel').forEach(ch => {
   ch.addEventListener('click', (e) => {
     e.preventDefault();
@@ -635,14 +581,12 @@ document.querySelectorAll('.channel').forEach(ch => {
     refreshChannelUI();
   });
 });
-
 document.getElementById('configToggle').addEventListener('click', () => {
   const body = document.getElementById('configBody');
   const arrow = document.getElementById('configArrow');
   const open = body.classList.toggle('open');
   arrow.textContent = open ? '▾' : '▸';
 });
-
 function wireToggle(toggleId, bodyId, arrowId){
   const toggle = document.getElementById(toggleId);
   if(!toggle) return;
@@ -655,61 +599,189 @@ function wireToggle(toggleId, bodyId, arrowId){
 }
 wireToggle('unknownClusterToggle', 'unknownClusterBody', 'unknownClusterArrow');
 wireToggle('clusterRefToggle', 'clusterRefBody', 'clusterRefArrow');
-
 // ============================================================
-// BİLİNEN CLUSTER / HOST REFERANSI (v3 — 23 Tem 2026)
-// manual_complaint.py'deki HOSTS + CLUSTER_MAP'in salt-okunur JS
-// kopyası. DİKKAT: Python dosyası güncellendiğinde bu liste ELLE
-// senkronize edilmeli — otomatik değil, sadece hızlı referans için.
+// BİLİNEN CLUSTER / HOST REFERANSI (v4 — 19 Ağu 2026)
+// manual_complaint.py'deki HOSTS + CLUSTER_MAP'ten OTOMATİK üretildi
+// (Python sözlüklerinden JS'e derlendi, elle yazılmadı). Python
+// dosyası tekrar güncellendiğinde bu iki blok yeniden üretilmeli.
 // ============================================================
 const KNOWN_HOSTS = {
-  netiface:        {name: "Netiface LLC / VPS Dedicated LLC", email: "abuse@abusehandler.net, abuse@vpsdedicated.net"},
-  omegatech:       {name: "Omegatech LTD", email: "abuse@pitline.net, abuse@omegatech.sc"},
-  advin:           {name: "Advin Services LLC", email: "anush@advinservers.com"},
-  swissnet:        {name: "SwissNet LLC", email: "abuse@swissnetwork.io"},
-  prq:             {name: "PRQ VPN Network SE", email: "abuse@dcs.net"},
-  fatcat_scrhost:  {name: "FATCAT-AS / scrhost.com", email: "info@scrhost.com"},
+  netiface: {name: "Netiface LLC / VPS Dedicated LLC", email: "abuse@abusehandler.net, abuse@vpsdedicated.net"},
+  vpsdedicated_flashwisp: {name: "VPS Dedicated LLC, US (flashwisp.com.ng)", email: "abuse@flashwisp.com.ng"},
+  sollutium: {name: "Unnamed host (sollutium.com)", email: "abuse@sollutium.com"},
+  omegatech: {name: "Omegatech LTD", email: "abuse@pitline.net, abuse@omegatech.sc"},
+  virtualsystems: {name: "Virtual Systems LLC", email: "abuse@wehostservers.com"},
+  blazedge: {name: "Blazedge", email: "abuse@blazedge.com"},
+  advin: {name: "Advin Services LLC", email: "anush@advinservers.com"},
+  swissnet: {name: "SwissNet LLC", email: "abuse@swissnetwork.io"},
+  prq: {name: "PRQ VPN Network SE", email: "abuse@dcs.net"},
+  fatcat_scrhost: {name: "FATCAT-AS / scrhost.com", email: "info@scrhost.com"},
   fatcat_epikhost: {name: "FATCAT NETWORK S.A.", email: "abuse@epikhost.org"},
-  vpsdatacenter:   {name: "VPS Datacenter Ltd (private-data-center.com)", email: "abuse@private-data-center.com"},
-  colocatel:       {name: "ColocaTel Inc.", email: "abuse@colocatel.com"},
-  evoxt:           {name: "Evoxt Sdn. Bhd.", email: "abuse@evoxt.com"},
-  cloudzy:         {name: "RouterHosting/Cloudzy", email: "abuse-reports@cloudzy.com"},
-  play2go:         {name: "PLAY2GO INTERNATIONAL LIMITED", email: "abuse@play2go.cloud"},
-  namecheap:       {name: "Namecheap, Inc.", email: "abuse@namecheaphosting.com"},
-  pfcloud:         {name: "Pfcloud UG (abusehandler.net)", email: "abuse@abusehandler.net"},
-  pfcloud_io:      {name: "Pfcloud UG (pfcloud.io)", email: "abuse@pfcloud.io"},
-  sahinnetwork:    {name: "Bursabil Teknoloji A.Ş.", email: "abuse@sahinnetwork.com"},
-  frantech:        {name: "FranTech Solutions (PONYNET)", email: "admin@frantech.ca"},
+  vpsdatacenter: {name: "VPS Datacenter Ltd (private-data-center.com)", email: "abuse@private-data-center.com"},
+  weridata: {name: "WERIDATA-LLC / VIRTUO - 12651980 Canada Inc., US", email: "report@abuseradar.com"},
+  colocatel: {name: "ColocaTel Inc.", email: "abuse@colocatel.com"},
+  evoxt: {name: "Evoxt Sdn. Bhd.", email: "abuse@evoxt.com"},
+  cloudzy: {name: "RouterHosting/Cloudzy", email: "abuse-reports@cloudzy.com"},
+  gannon_nancy_ambiguous: {name: "PLAY2GO / Omegatech / SYNLINQ (belirsiz)", email: "abuse@play2go.cloud, abuse@pitline.net, abuse@omegatech.sc, abuse@ghostnet.de, abuse@roeth-und-beck.de"},
+  play2go: {name: "PLAY2GO INTERNATIONAL LIMITED", email: "abuse@play2go.cloud"},
+  namecheap: {name: "Namecheap, Inc.", email: "abuse@namecheaphosting.com"},
+  pfcloud: {name: "Pfcloud UG (abusehandler.net)", email: "abuse@abusehandler.net"},
+  pfcloud_io: {name: "Pfcloud UG (pfcloud.io)", email: "abuse@pfcloud.io"},
+  sahinnetwork: {name: "Bursabil Teknoloji A.Ş.", email: "abuse@sahinnetwork.com"},
+  frantech: {name: "FranTech Solutions (PONYNET)", email: "admin@frantech.ca"},
+  synlinq: {name: "SYNLINQ (Oliver Horscht)", email: "abuse@ghostnet.de, abuse@roeth-und-beck.de"},
+  adaline_chris_ambiguous: {name: "SYNLINQ / Omegatech (belirsiz)", email: "abuse@ghostnet.de, abuse@roeth-und-beck.de, abuse@pitline.net, abuse@omegatech.sc"},
+  brady_harmony_ambiguous: {name: "VPS Dedicated LLC (belirsiz)", email: "abuse@abusehandler.net, abuse@flashwisp.com.ng"},
+  jeremy_kay_ambiguous: {name: "Omegatech / VPS Dedicated (belirsiz)", email: "abuse@pitline.net, abuse@omegatech.sc, abuse@abusehandler.net"},
+  mimi_sevki_ambiguous: {name: "SYNLINQ / VPS Dedicated (belirsiz)", email: "abuse@ghostnet.de, abuse@roeth-und-beck.de, abuse@abusehandler.net"},
+  corey_lucy_ambiguous: {name: "SYNLINQ / Omegatech (belirsiz)", email: "abuse@ghostnet.de, abuse@roeth-und-beck.de, abuse@pitline.net, abuse@omegatech.sc"},
+  aisha_langston_ambiguous: {name: "Omegatech / VPS Dedicated (belirsiz)", email: "abuse@pitline.net, abuse@omegatech.sc, abuse@abusehandler.net"},
+  mario_norah_ambiguous: {name: "FranTech / VPS Dedicated (belirsiz)", email: "admin@frantech.ca, abuse@vpsdedicated.net"},
+  ezra_veda_ambiguous: {name: "SwissNet / Pfcloud (belirsiz)", email: "abuse@swissnetwork.io, abuse@abusehandler.net"},
+  luciane_oswald_ambiguous: {name: "Omegatech / SYNLINQ / VPS Dedicated (belirsiz)", email: "abuse@pitline.net, abuse@omegatech.sc, abuse@ghostnet.de, abuse@roeth-und-beck.de, abuse@abusehandler.net"},
+  elinore_patrick_ambiguous: {name: "SwissNet / FrostyHosting / VPS Dedicated (belirsiz)", email: "abuse@swissnetwork.io, frostyhosting@proton.me, abuse@vpsdedicated.net"},
+  georgia_kobe_ambiguous: {name: "Netiface / VPS Dedicated (belirsiz)", email: "abuse@abusehandler.net, abuse@flashwisp.com.ng"},
+  ruben_ariella_ambiguous: {name: "Advin / VPS Dedicated (belirsiz)", email: "anush@advinservers.com, abuse@flashwisp.com.ng"},
+  digitalocean: {name: "DigitalOcean LLC", email: "abuse@digitalocean.com"},
+  alexhost: {name: "AlexHost SRL, MD", email: "noc@alexhost.com"},
+  ovh: {name: "OVH SAS, FR", email: "abuse@ovh.net"},
+  knownsrv: {name: "KnownSRV Ltd.", email: "abuse@pronect.hr"},
+  privatelayer: {name: "Private Layer INC / Digitale Suisse AG", email: "abuse@privatelayer.com"},
+  frostyhosting: {name: "FrostyHosting (RU)", email: "frostyhosting@proton.me"},
+  ipvendetta: {name: "IP Vendetta Inc.", email: "abuse@ipvendetta.com"},
+  desi_josh_ambiguous: {name: "SwissNet / VPS Datacenter (belirsiz)", email: "abuse@swissnetwork.io, abuse@private-data-center.com"},
 };
 const KNOWN_CLUSTERS = [
-  ["drew/leia", "netiface"], ["carol/mustafa", "netiface"], ["conrad/leia", "netiface"],
-  ["remy/stella", "netiface"], ["keaton/shaz", "netiface"], ["venus/carmelo", "netiface"],
-  ["justin/sierra", "netiface"], ["buck/phoenix", "netiface"], ["princess/rory", "netiface"],
-  ["charles/novalee", "netiface"], ["benedict/ophelia", "netiface"], ["georgia/kobe", "netiface"],
-  ["devin/nucum", "netiface"], ["brady/harmony", "netiface"], ["colin/nena", "netiface"],
-  ["syeef/tina", "omegatech"], ["isla/nolan", "omegatech"], ["aisha/langston", "omegatech"],
-  ["archer/melissa", "omegatech"], ["dane/alice", "omegatech"], ["aleena/tony", "omegatech"],
-  ["luciane/oswald", "omegatech"],
-  ["ruben/ariella", "advin"], ["raegan/gabe", "advin"],
-  ["penny/tanner", "swissnet"], ["elliot/marlowe", "swissnet"], ["ainsley/lamar", "swissnet"], ["lee/aida", "swissnet"],
-  ["decker/liberty", "prq"], ["paris/porter", "prq"],
-  ["gail/lennox", "fatcat_scrhost"], ["candy/nico", "fatcat_scrhost"], ["robin/ram", "fatcat_scrhost"],
+  ["abdullah/liv", "swissnet"],
+  ["achiel/nicole", "weridata"],
+  ["adaline/chris", "adaline_chris_ambiguous"],
+  ["adaline/joaquin", "netiface"],
+  ["adel/albert", "netiface"],
+  ["adi/langston", "vpsdatacenter"],
+  ["aida/lee", "swissnet"],
+  ["aiden/naya", "synlinq"],
+  ["ainsley/lamar", "swissnet"],
+  ["ainsley/tate", "omegatech"],
+  ["aisha/langston", "aisha_langston_ambiguous"],
+  ["aleena/andronicus", "frantech"],
+  ["aleena/art", "frantech"],
+  ["aleena/tony", "omegatech"],
+  ["alexia/burt", "sollutium"],
+  ["alexia/greg", "vpsdatacenter"],
+  ["alice/dane", "omegatech"],
   ["alice/seamus", "fatcat_epikhost"],
-  ["ophelia/theo", "vpsdatacenter"], ["garrett/indie", "vpsdatacenter"], ["kipp/penny", "vpsdatacenter"],
-  ["eve/sean", "vpsdatacenter"], ["jewel/vin", "vpsdatacenter"], ["achiel/nicole", "vpsdatacenter"],
+  ["aliza/dean", "netiface"],
   ["andronicus/emely", "vpsdatacenter"],
-  ["opal/ricardo", "evoxt"],
-  ["aron/javier", "colocatel"], ["bowen/rosemary", "colocatel"], ["kurt/leah", "colocatel"],
-  ["paityn/titan", "cloudzy"],
-  ["gannon/nancy", "play2go"],
-  ["brenda/leif", "namecheap"],
-  ["candy/edward", "pfcloud"],
-  ["huxley/kami", "pfcloud_io"],
+  ["ara/mark", "fatcat_epikhost"],
+  ["archer/lana", "digitalocean"],
+  ["archer/melissa", "omegatech"],
+  ["ariella/ruben", "ruben_ariella_ambiguous"],
+  ["armando/melody", "colocatel"],
+  ["aron/javier", "colocatel"],
+  ["benedict/ophelia", "netiface"],
   ["bonnie/fred", "sahinnetwork"],
+  ["bowen/lauryn", "netiface"],
+  ["bowen/rosemary", "colocatel"],
+  ["braden/priscilla", "netiface"],
+  ["brady/cora", "pfcloud"],
+  ["brady/harmony", "brady_harmony_ambiguous"],
+  ["brenda/leif", "namecheap"],
+  ["brodie/laylah", "vpsdedicated_flashwisp"],
+  ["buck/phoenix", "netiface"],
+  ["burt/kiki", "alexhost"],
+  ["burt/liz", "frantech"],
+  ["byron/crystal", "frantech"],
+  ["candy/edward", "pfcloud"],
+  ["candy/nico", "fatcat_scrhost"],
+  ["carmelo/venus", "netiface"],
+  ["carol/mustafa", "netiface"],
+  ["cartman/elma", "virtualsystems"],
+  ["cash/macy", "weridata"],
+  ["chad/lucy", "netiface"],
+  ["charles/novalee", "netiface"],
+  ["clayton/jade", "vpsdatacenter"],
+  ["colin/nena", "netiface"],
+  ["conrad/leia", "netiface"],
+  ["conrad/veda", "privatelayer"],
+  ["corey/lucy", "corey_lucy_ambiguous"],
+  ["corey/teresa", "swissnet"],
+  ["cortney/denver", "privatelayer"],
+  ["cosmin/melany", "frantech"],
+  ["cruz/hasslo", "omegatech"],
+  ["daniella/felipe", "play2go"],
+  ["dayana/harlan", "weridata"],
+  ["decker/dolly", "alexhost"],
+  ["decker/liberty", "prq"],
+  ["delilah/jack", "swissnet"],
+  ["desi/josh", "desi_josh_ambiguous"],
+  ["devin/nucum", "netiface"],
+  ["donovan/melinda", "netiface"],
+  ["drew/leia", "pfcloud"],
+  ["ed/kate", "frantech"],
+  ["edna/shane", "swissnet"],
+  ["elaine/emerson", "colocatel"],
+  ["elinore/patrick", "elinore_patrick_ambiguous"],
+  ["elliot/marlowe", "swissnet"],
+  ["elliott/paloma", "netiface"],
+  ["elmo/romina", "netiface"],
+  ["eloise/peter", "swissnet"],
+  ["emely/ishaan", "colocatel"],
+  ["emerie/kai", "knownsrv"],
+  ["emerson/lady", "netiface"],
+  ["ernest/oaklyn", "netiface"],
+  ["eve/sean", "vpsdatacenter"],
+  ["ezra/veda", "ezra_veda_ambiguous"],
+  ["fattouche/luciane", "swissnet"],
+  ["fred/ivy", "frantech"],
+  ["gabe/raegan", "advin"],
+  ["gail/lennox", "fatcat_scrhost"],
+  ["gannon/nancy", "gannon_nancy_ambiguous"],
+  ["garrett/indie", "vpsdatacenter"],
+  ["gene/hans", "colocatel"],
+  ["george/treasure", "pfcloud"],
+  ["georgia/kobe", "georgia_kobe_ambiguous"],
+  ["hal/lola", "frantech"],
+  ["harlee/tim", "vpsdatacenter"],
+  ["huxley/kami", "pfcloud_io"],
+  ["igor/ziggy", "netiface"],
+  ["isla/nolan", "omegatech"],
+  ["jack/nora", "netiface"],
+  ["james/maeve", "vpsdatacenter"],
+  ["jen/paul", "pfcloud"],
+  ["jeremy/kay", "jeremy_kay_ambiguous"],
+  ["jewel/vin", "vpsdatacenter"],
+  ["justin/sierra", "netiface"],
+  ["kanye/magnolia", "omegatech"],
   ["katja/tosana", "frantech"],
-  ["ernest/oaklyn", "netiface"], ["adi/langston", "vpsdatacenter"], ["donovan/melinda", "omegatech"],
+  ["keaton/shaz", "netiface"],
+  ["khalid/suzanne", "frantech"],
+  ["kipp/penny", "vpsdatacenter"],
+  ["kurt/leah", "colocatel"],
+  ["kyle/roxy", "netiface"],
+  ["leanna/patrick", "vpsdedicated_flashwisp"],
+  ["luciane/oswald", "luciane_oswald_ambiguous"],
+  ["marge/sullivan", "frantech"],
+  ["mario/norah", "mario_norah_ambiguous"],
+  ["martha/rex", "netiface"],
+  ["maya/uriah", "virtualsystems"],
+  ["mimi/sevki", "mimi_sevki_ambiguous"],
+  ["nitin/raina", "colocatel"],
+  ["nitin/selah", "privatelayer"],
+  ["opal/ricardo", "evoxt"],
+  ["ophelia/theo", "vpsdatacenter"],
+  ["paityn/rick", "ovh"],
+  ["paityn/titan", "cloudzy"],
+  ["paris/porter", "prq"],
+  ["pdns1/pdns2", "blazedge"],
+  ["pedro/susan", "ipvendetta"],
+  ["penny/tanner", "swissnet"],
+  ["princess/rory", "netiface"],
+  ["ram/robin", "fatcat_scrhost"],
+  ["remy/stella", "netiface"],
+  ["sreeni/zahir", "evoxt"],
+  ["stevie/wilson", "netiface"],
+  ["syeef/tina", "omegatech"],
 ];
-
 function renderClusterRef(filterText){
   const container = document.getElementById('clusterRefList');
   const f = (filterText || '').toLowerCase();
@@ -732,7 +804,6 @@ function renderClusterRef(filterText){
   }).join('');
 }
 document.getElementById('clusterRefSearch').addEventListener('input', (e) => renderClusterRef(e.target.value.trim()));
-
 // ============================================================
 // BİLİNMEYEN CLUSTER TAKİBİ
 // ============================================================
@@ -781,7 +852,6 @@ document.getElementById('clearUnknownClustersBtn').addEventListener('click', () 
   localStorage.removeItem('unknown-clusters');
   renderUnknownClusters();
 });
-
 async function loadSavedConfig(){
   try{
     const raw = localStorage.getItem('github-config');
@@ -794,9 +864,7 @@ async function loadSavedConfig(){
     }
   }catch(e){ /* kayıtlı ayar yok, normal */ }
 }
-
 let _allLogEntries = [];
-
 async function loadLog(){
   try{
     const raw = localStorage.getItem('dispatch-log');
@@ -810,12 +878,10 @@ async function loadLog(){
   updateTicker();
   updateActionsLink();
 }
-
 function updateTicker(){
   document.getElementById('caseTicker').textContent =
     'CASE #' + String(caseCounter).padStart(4,'0') + ' · HAZIR';
 }
-
 function updateActionsLink(){
   const repo = document.getElementById('repo').value.trim();
   const link = document.getElementById('actionsLink');
@@ -826,21 +892,18 @@ function updateActionsLink(){
     link.style.display = 'none';
   }
 }
-
 function renderStats(entries){
   const statsBox = document.getElementById('logStats');
   const totalDispatches = entries.length;
   const totalDomains = entries.reduce((sum, e) => sum + e.domains.split(',').length, 0);
   const today = new Date().toLocaleDateString('tr-TR');
   const todayCount = entries.filter(e => e.time.startsWith(today)).length;
-
   statsBox.innerHTML = `
     <div class="log-stat"><div class="num">${totalDispatches}</div><div class="lbl">Toplam Gönderim</div></div>
     <div class="log-stat"><div class="num">${totalDomains}</div><div class="lbl">Toplam Domain</div></div>
     <div class="log-stat"><div class="num">${todayCount}</div><div class="lbl">Bugün</div></div>
   `;
 }
-
 function renderLog(entries, filterText){
   const log = document.getElementById('log');
   let filtered = entries;
@@ -859,7 +922,6 @@ function renderLog(entries, filterText){
     const domainChips = e.domains.split(',').map(d =>
       '<span class="log-domain-chip">' + d.trim() + '</span>'
     ).join('');
-
     let bodyHtml;
     if(e.results && Array.isArray(e.results.domains)){
       let okCount = 0, failCount = 0;
@@ -877,7 +939,6 @@ function renderLog(entries, filterText){
       ).join('');
       bodyHtml = '<div class="log-channels">' + channelBadges + '</div>';
     }
-
     return (
       '<div class="log-entry">' +
         '<div class="lt"><span>' + e.time + '</span><span class="case-num">#' + String(caseNum).padStart(4,'0') + '</span></div>' +
@@ -887,11 +948,9 @@ function renderLog(entries, filterText){
     );
   }).join('');
 }
-
 document.getElementById('logSearch').addEventListener('input', (e) => {
   renderLog(_allLogEntries, e.target.value.trim());
 });
-
 document.getElementById('exportLogBtn').addEventListener('click', () => {
   if(!_allLogEntries.length){ return; }
   const rows = [['Tarih/Saat', 'Domainler', 'Kanallar']];
@@ -907,9 +966,7 @@ document.getElementById('exportLogBtn').addEventListener('click', () => {
   a.click();
   URL.revokeObjectURL(url);
 });
-
 document.getElementById('repo').addEventListener('input', updateActionsLink);
-
 async function saveLogEntry(entry){
   let entries = [];
   try{
@@ -928,7 +985,6 @@ async function saveLogEntry(entry){
   renderStats(entries);
   updateTicker();
 }
-
 function updateLogEntryResults(requestId, resultsJson){
   let entries = [];
   try{
@@ -942,7 +998,6 @@ function updateLogEntryResults(requestId, resultsJson){
   _allLogEntries = entries;
   renderLog(entries, document.getElementById('logSearch').value.trim());
 }
-
 async function saveConfigIfRemembered(){
   if(document.getElementById('rememberPat').checked){
     const cfg = {
@@ -953,7 +1008,6 @@ async function saveConfigIfRemembered(){
     try{ localStorage.setItem('github-config', JSON.stringify(cfg)); }catch(e){}
   }
 }
-
 // ============================================================
 // TÜM FORM ALANLARI (PAT HARİÇ) — her değişiklikte otomatik kaydet,
 // sayfa açılışında geri yükle. Böylece sayfa yenilenince/kapanınca
@@ -963,7 +1017,6 @@ const PERSISTED_FIELD_IDS = [
   'domains', 'brand', 'activeOverride', 'reporterEmail',
   'notes', 'customEmail', 'repo', 'workflowFile', 'branch',
 ];
-
 function saveFormState(){
   const state = {};
   PERSISTED_FIELD_IDS.forEach(id => {
@@ -973,7 +1026,6 @@ function saveFormState(){
   state.targets = getActiveTargets();
   try{ localStorage.setItem('form-state', JSON.stringify(state)); }catch(e){}
 }
-
 function loadFormState(){
   try{
     const raw = localStorage.getItem('form-state');
@@ -991,7 +1043,6 @@ function loadFormState(){
     }
   }catch(e){ /* kayıtlı form yok, normal */ }
 }
-
 function wireAutoSave(){
   PERSISTED_FIELD_IDS.forEach(id => {
     const el = document.getElementById(id);
@@ -1001,13 +1052,11 @@ function wireAutoSave(){
     ch.addEventListener('click', saveFormState);
   });
 }
-
 function showStatus(type, text){
   const box = document.getElementById('statusBox');
   box.className = 'status show ' + type;
   box.textContent = text;
 }
-
 function markRelaySent(targets){
   targets.forEach(t => {
     const dot = document.getElementById('relay-dot-' + t);
@@ -1020,12 +1069,10 @@ function markRelaySent(targets){
     });
   }, 2200);
 }
-
 function generateRequestId(){
   if(window.crypto && window.crypto.randomUUID) return window.crypto.randomUUID();
   return 'req-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10);
 }
-
 function renderResultsDetail(resultsJson){
   const container = document.getElementById('resultsDetail');
   if(!resultsJson || !Array.isArray(resultsJson.domains)){
@@ -1048,7 +1095,6 @@ function renderResultsDetail(resultsJson){
       notes +
     '</div>';
   }).join('');
-
   // Bilinmeyen cluster'ları otomatik takip listesine ekle
   resultsJson.domains.forEach(d => {
     if(d.host && d.host.status === 'unknown_cluster'){
@@ -1056,7 +1102,6 @@ function renderResultsDetail(resultsJson){
     }
   });
 }
-
 async function pollForResults(repo, requestId, pat, branch){
   const maxTries = 24;
   const intervalMs = 5000;
@@ -1085,7 +1130,6 @@ async function pollForResults(repo, requestId, pat, branch){
   }
   return null; // zaman aşımı
 }
-
 document.getElementById('dispatchBtn').addEventListener('click', async () => {
   const domains = document.getElementById('domains').value.trim();
   const brand = document.getElementById('brand').value;
@@ -1094,12 +1138,10 @@ document.getElementById('dispatchBtn').addEventListener('click', async () => {
   const notes = document.getElementById('notes').value.trim();
   const customEmail = document.getElementById('customEmail').value.trim();
   const targets = getActiveTargets();
-
   const repo = document.getElementById('repo').value.trim();
   const workflowFile = document.getElementById('workflowFile').value.trim();
   const branch = document.getElementById('branch').value.trim() || 'main';
   const pat = document.getElementById('pat').value.trim();
-
   if(!domains){ showStatus('err', 'En az bir domain girmelisin.'); return; }
   if(!targets.length){ showStatus('err', 'En az bir hedef kanal seçmelisin.'); return; }
   if(targets.includes('custom_email') && !customEmail){
@@ -1114,12 +1156,10 @@ document.getElementById('dispatchBtn').addEventListener('click', async () => {
     document.getElementById('configArrow').textContent = '▾';
     return;
   }
-
   const btn = document.getElementById('dispatchBtn');
   btn.disabled = true;
   document.getElementById('resultsDetail').innerHTML = '';
   showStatus('pending', 'GitHub Actions tetikleniyor…');
-
   const requestId = generateRequestId();
   const inputs = {
     domains: domains.replace(/\n/g, ','),
@@ -1131,7 +1171,6 @@ document.getElementById('dispatchBtn').addEventListener('click', async () => {
     notes: notes,
     request_id: requestId,
   };
-
   try{
     const resp = await fetch('https://api.github.com/repos/' + repo + '/actions/workflows/' + workflowFile + '/dispatches', {
       method: 'POST',
@@ -1142,7 +1181,6 @@ document.getElementById('dispatchBtn').addEventListener('click', async () => {
       },
       body: JSON.stringify({ ref: branch, inputs: inputs }),
     });
-
     if(resp.status === 204){
       markRelaySent(targets);
       await saveLogEntry({
@@ -1155,7 +1193,6 @@ document.getElementById('dispatchBtn').addEventListener('click', async () => {
       });
       await saveConfigIfRemembered();
       updateDuplicateWarning();
-
       showStatus('pending', '✓ Tetiklendi. Gerçek sonuç bekleniyor (bu ~30-90 saniye sürebilir)…');
       const results = await pollForResults(repo, requestId, pat, branch);
       if(results){
@@ -1177,7 +1214,6 @@ document.getElementById('dispatchBtn').addEventListener('click', async () => {
     btn.disabled = false;
   }
 });
-
 loadFormState();
 refreshChannelUI();
 wireAutoSave();
