@@ -70,7 +70,9 @@
   }
   textarea::placeholder, input::placeholder{color:#4E5C74;}
   textarea:focus, input:focus, select:focus{border-color:var(--signal);}
-  textarea{min-height:88px; resize:vertical; line-height:1.5;}
+  /* GÜNCELLENDİ 21 Ağu 2026 — domain kutusu çok kısaydı (88px), görüntü olarak
+     zar zor 2-3 satır sığıyordu; 170px'e çıkarıldı (~7-8 satır) */
+  textarea{min-height:170px; resize:vertical; line-height:1.5;}
   select{font-family:'Inter', sans-serif; appearance:none; background-image:linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 18px) calc(50% - 3px), calc(100% - 13px) calc(50% - 3px); background-size:5px 5px, 5px 5px; background-repeat:no-repeat;}
   .hint{font-size:11.5px; color:#5B6980; margin-top:5px; line-height:1.4;}
   .channels{display:flex; flex-wrap:wrap; gap:8px;}
@@ -437,7 +439,7 @@
         <a class="btn-ghost" id="actionsLink" href="#" target="_blank" rel="noopener" style="display:none; text-decoration:none;">GitHub Actions'ta Görüntüle →</a>
       </div>
       <div class="footnote">
-        Panel, GitHub Actions <code>workflow_dispatch</code> event'ini tetikler ve ardından gerçek sonucu (mail atıldı mı, hangi host/registrar bulundu vb.) otomatik olarak çekip burada gösterir. Aynı bilgi ayrıca <b>Telegram</b>'a da düşer. Geçmiş bu tarayıcıda kalıcı olarak saklanır (son 100 kayıt).
+        Panel, GitHub Actions <code>workflow_dispatch</code> event'ini tetikler ve ardından gerçek sonucu (mail atıldı mı, hangi host/registrar bulundu vb.) otomatik olarak çekip burada gösterir. Aynı bilgi ayrıca <b>Telegram</b>'a da düşer. Görüntülenen liste bu tarayıcıda son 100 kayıtla sınırlıdır, ancak yukarıdaki toplam sayaçlar (Toplam Gönderim / Toplam Domain) bu sınırdan etkilenmez ve gerçek toplamı gösterir.
       </div>
     </div>
   </div>
@@ -478,6 +480,26 @@ const CHANNEL_LABELS = {
   smartscreen: "SMARTSC", spam404: "SPAM404", spamhaus: "SPAMHAUS", apwg: "APWG"
 };
 let caseCounter = 0;
+// ============================================================
+// KALICI TOPLAM SAYAÇLAR (v5 — 21 Ağu 2026)
+// dispatch-log dizisi depolama için son 100 kayıtla sınırlı tutuluyor
+// (bkz. saveLogEntry). Eskiden "Toplam Gönderim"/"Toplam Domain"
+// doğrudan bu kırpılmış dizinin uzunluğundan/toplamından hesaplanıyordu,
+// bu yüzden 100 gönderimi geçince sayaç donuyordu. Artık ayrı,
+// hiç kırpılmayan bir "dispatch-total-stats" kaydı tutuluyor; bu
+// sayaçlar her gönderimde +1 artıyor ve array kırpılsa bile kaybolmuyor.
+// ============================================================
+let totalStats = null;
+function loadTotalStats(){
+  try{
+    const raw = localStorage.getItem('dispatch-total-stats');
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return null;
+}
+function saveTotalStats(stats){
+  try{ localStorage.setItem('dispatch-total-stats', JSON.stringify(stats)); }catch(e){}
+}
 function buildRelay(activeTargets){
   const relay = document.getElementById('relay');
   relay.innerHTML = '';
@@ -623,6 +645,8 @@ const KNOWN_HOSTS = {
   colocatel: {name: "ColocaTel Inc.", email: "abuse@colocatel.com"},
   evoxt: {name: "Evoxt Sdn. Bhd.", email: "abuse@evoxt.com"},
   cloudzy: {name: "RouterHosting/Cloudzy", email: "abuse-reports@cloudzy.com"},
+  koddos: {name: "KoDDoS / Amarutu Technology Ltd", email: "abuse@koddos.com, abuse@koddos.net"},
+  pfcloud_vmheaven: {name: "Pfcloud UG (vmheaven.io)", email: "abuse@vmheaven.io"},
   gannon_nancy_ambiguous: {name: "PLAY2GO / Omegatech / SYNLINQ (belirsiz)", email: "abuse@play2go.cloud, abuse@pitline.net, abuse@omegatech.sc, abuse@ghostnet.de, abuse@roeth-und-beck.de"},
   play2go: {name: "PLAY2GO INTERNATIONAL LIMITED", email: "abuse@play2go.cloud"},
   namecheap: {name: "Namecheap, Inc.", email: "abuse@namecheaphosting.com"},
@@ -651,6 +675,7 @@ const KNOWN_HOSTS = {
   frostyhosting: {name: "FrostyHosting (RU)", email: "frostyhosting@proton.me"},
   ipvendetta: {name: "IP Vendetta Inc.", email: "abuse@ipvendetta.com"},
   desi_josh_ambiguous: {name: "SwissNet / VPS Datacenter (belirsiz)", email: "abuse@swissnetwork.io, abuse@private-data-center.com"},
+  dayana_kurt_ambiguous: {name: "Netiface / VPS Dedicated (flashwisp) (belirsiz)", email: "abuse@abusehandler.net, abuse@vpsdedicated.net, abuse@flashwisp.com.ng"},
 };
 const KNOWN_CLUSTERS = [
   ["abdullah/liv", "swissnet"],
@@ -676,7 +701,7 @@ const KNOWN_CLUSTERS = [
   ["ara/mark", "fatcat_epikhost"],
   ["archer/lana", "digitalocean"],
   ["archer/melissa", "omegatech"],
-  ["ariella/ruben", "ruben_ariella_ambiguous"],
+  ["ariella/ruben", "vpsdedicated_flashwisp"],
   ["armando/melody", "colocatel"],
   ["aron/javier", "colocatel"],
   ["benedict/ophelia", "netiface"],
@@ -692,6 +717,7 @@ const KNOWN_CLUSTERS = [
   ["burt/kiki", "alexhost"],
   ["burt/liz", "frantech"],
   ["byron/crystal", "frantech"],
+  ["camilo/hera", "netiface"],
   ["candy/edward", "pfcloud"],
   ["candy/nico", "fatcat_scrhost"],
   ["carmelo/venus", "netiface"],
@@ -708,9 +734,12 @@ const KNOWN_CLUSTERS = [
   ["corey/teresa", "swissnet"],
   ["cortney/denver", "privatelayer"],
   ["cosmin/melany", "frantech"],
+  ["crystal/marty", "frostyhosting"],
   ["cruz/hasslo", "omegatech"],
+  ["damiete/elisa", "pfcloud_vmheaven"],
   ["daniella/felipe", "play2go"],
   ["dayana/harlan", "weridata"],
+  ["dayana/kurt", "dayana_kurt_ambiguous"],
   ["decker/dolly", "alexhost"],
   ["decker/liberty", "prq"],
   ["delilah/jack", "swissnet"],
@@ -721,15 +750,19 @@ const KNOWN_CLUSTERS = [
   ["ed/kate", "frantech"],
   ["edna/shane", "swissnet"],
   ["elaine/emerson", "colocatel"],
+  ["elinore/julio", "vpsdatacenter"],
   ["elinore/patrick", "elinore_patrick_ambiguous"],
   ["elliot/marlowe", "swissnet"],
   ["elliott/paloma", "netiface"],
+  ["elma/salvador", "frostyhosting"],
   ["elmo/romina", "netiface"],
+  ["elsa/norm", "pfcloud"],
   ["eloise/peter", "swissnet"],
   ["emely/ishaan", "colocatel"],
   ["emerie/kai", "knownsrv"],
   ["emerson/lady", "netiface"],
   ["ernest/oaklyn", "netiface"],
+  ["evangeline/sullivan", "privatelayer"],
   ["eve/sean", "vpsdatacenter"],
   ["ezra/veda", "ezra_veda_ambiguous"],
   ["fattouche/luciane", "swissnet"],
@@ -745,6 +778,7 @@ const KNOWN_CLUSTERS = [
   ["harlee/tim", "vpsdatacenter"],
   ["huxley/kami", "pfcloud_io"],
   ["igor/ziggy", "netiface"],
+  ["imani/kipp", "koddos"],
   ["isla/nolan", "omegatech"],
   ["jack/nora", "netiface"],
   ["james/maeve", "vpsdatacenter"],
@@ -755,6 +789,7 @@ const KNOWN_CLUSTERS = [
   ["kanye/magnolia", "omegatech"],
   ["katja/tosana", "frantech"],
   ["keaton/shaz", "netiface"],
+  ["kehlani/yahir", "frostyhosting"],
   ["khalid/suzanne", "frantech"],
   ["kipp/penny", "vpsdatacenter"],
   ["kurt/leah", "colocatel"],
@@ -871,11 +906,20 @@ async function loadLog(){
     const raw = localStorage.getItem('dispatch-log');
     if(raw){
       _allLogEntries = JSON.parse(raw);
-      caseCounter = _allLogEntries.length;
     }
   }catch(e){ /* log yok, normal */ }
+  totalStats = loadTotalStats();
+  if(!totalStats){
+    // Geriye dönük uyumluluk: bu sürüm ilk kez çalışıyor, elde kalan
+    // (zaten kırpılmış olabilecek) geçmişten kaba bir başlangıç değeri
+    // türet. Bu andan sonra sayaç doğru şekilde artmaya devam eder.
+    const domainsSum = _allLogEntries.reduce((s, e) => s + e.domains.split(',').length, 0);
+    totalStats = { dispatches: _allLogEntries.length, domains: domainsSum };
+    saveTotalStats(totalStats);
+  }
+  caseCounter = totalStats.dispatches;
   renderLog(_allLogEntries);
-  renderStats(_allLogEntries);
+  renderStats();
   updateTicker();
   updateActionsLink();
 }
@@ -893,15 +937,13 @@ function updateActionsLink(){
     link.style.display = 'none';
   }
 }
-function renderStats(entries){
+function renderStats(){
   const statsBox = document.getElementById('logStats');
-  const totalDispatches = entries.length;
-  const totalDomains = entries.reduce((sum, e) => sum + e.domains.split(',').length, 0);
   const today = new Date().toLocaleDateString('tr-TR');
-  const todayCount = entries.filter(e => e.time.startsWith(today)).length;
+  const todayCount = _allLogEntries.filter(e => e.time.startsWith(today)).length;
   statsBox.innerHTML = `
-    <div class="log-stat"><div class="num">${totalDispatches}</div><div class="lbl">Toplam Gönderim</div></div>
-    <div class="log-stat"><div class="num">${totalDomains}</div><div class="lbl">Toplam Domain</div></div>
+    <div class="log-stat"><div class="num">${totalStats.dispatches}</div><div class="lbl">Toplam Gönderim</div></div>
+    <div class="log-stat"><div class="num">${totalStats.domains}</div><div class="lbl">Toplam Domain</div></div>
     <div class="log-stat"><div class="num">${todayCount}</div><div class="lbl">Bugün</div></div>
   `;
 }
@@ -919,7 +961,10 @@ function renderLog(entries, filterText){
     return;
   }
   log.innerHTML = filtered.slice().reverse().slice(0, 30).map(e => {
-    const caseNum = entries.indexOf(e) + 1;
+    // e.caseNumber: yeni kayıtlarda kalıcı toplam sayaçtan atanır (bkz. saveLogEntry).
+    // Eski kayıtlarda bu alan yoksa (güncelleme öncesi veri), geriye dönük uyumluluk
+    // için dizideki konuma göre kaba bir numara üretilir.
+    const caseNum = e.caseNumber || (entries.indexOf(e) + 1);
     const domainChips = e.domains.split(',').map(d =>
       '<span class="log-domain-chip">' + d.trim() + '</span>'
     ).join('');
@@ -974,16 +1019,22 @@ async function saveLogEntry(entry){
     const raw = localStorage.getItem('dispatch-log');
     if(raw) entries = JSON.parse(raw);
   }catch(e){}
+  // Kalıcı toplamları güncelle — bu sayaçlar array kırpılsa bile hep artar
+  if(!totalStats) totalStats = loadTotalStats() || { dispatches: 0, domains: 0 };
+  totalStats.dispatches += 1;
+  totalStats.domains += entry.domains.split(',').length;
+  saveTotalStats(totalStats);
+  entry.caseNumber = totalStats.dispatches;
   entries.push(entry);
   if(entries.length > 100) entries = entries.slice(-100);
   try{
     localStorage.setItem('dispatch-log', JSON.stringify(entries));
   }catch(e){ console.error('log kaydedilemedi', e); }
   _allLogEntries = entries;
-  caseCounter = entries.length;
+  caseCounter = totalStats.dispatches;
   document.getElementById('logSearch').value = '';
   renderLog(entries);
-  renderStats(entries);
+  renderStats();
   updateTicker();
 }
 function updateLogEntryResults(requestId, resultsJson){
