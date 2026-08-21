@@ -444,6 +444,77 @@
     </div>
   </div>
   <div class="panel wide-section">
+    <div class="config-toggle" id="pendingEvidenceToggle">
+      <span id="pendingEvidenceArrow">▸</span> Bekleyen Kanıt Talepleri <span class="badge-count" id="pendingEvidenceCount"></span>
+    </div>
+    <div class="config-body" id="pendingEvidenceBody">
+      <div class="hint" style="margin-bottom:10px;">
+        NiceNIC/registrar "kanıt yetersiz" diye geri döndüğünde buraya ekle, kanıt maili gönderince "Çözüldü" işaretle. Hiçbiri mail kalabalığında kaybolmasın diye.
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="pendingDomain">Domain</label>
+          <input type="text" id="pendingDomain" placeholder="betsat1718.com">
+        </div>
+        <div class="field">
+          <label for="pendingChannel">Kanal</label>
+          <select id="pendingChannel">
+            <option value="nicenic">NiceNIC</option>
+            <option value="dynadot">Dynadot (web form)</option>
+            <option value="trustname">Trustname (web form)</option>
+            <option value="other">Diğer</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label for="pendingNote">Not (opsiyonel)</label>
+        <input type="text" id="pendingNote" placeholder="Örn: 2. kanıt talebi geldi, ekran görüntüsü hazırlanıyor">
+      </div>
+      <button class="btn-ghost" id="addPendingEvidenceBtn" style="width:100%; margin-bottom:14px;">+ Ekle</button>
+      <div id="pendingEvidenceList" class="unknown-cluster-list">
+        <div class="log-empty">Bekleyen kanıt talebi yok.</div>
+      </div>
+    </div>
+  </div>
+  <div class="panel wide-section">
+    <div class="config-toggle" id="muleDbToggle">
+      <span id="muleDbArrow">▸</span> Mule Veritabanı <span class="badge-count" id="muleDbCount"></span>
+    </div>
+    <div class="config-body" id="muleDbBody">
+      <div class="hint" style="margin-bottom:10px;">
+        Ekran görüntüsünden gördüğün IBAN/cüzdanları buraya ekle. Script de artık ödeme sayfalarını otomatik tarayıp aynı şeyi yapıyor (bkz. gerçek sonuçlardaki "🧬 Mule tekrarı" uyarıları) — bu liste ikisini birleştirir.
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="muleName">İsim (opsiyonel)</label>
+          <input type="text" id="muleName" placeholder="Barış Şahin">
+        </div>
+        <div class="field">
+          <label for="muleValue">IBAN veya cüzdan</label>
+          <input type="text" id="muleValue" placeholder="TR950009901690865000100005">
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="muleDomains">İlişkili domain(ler)</label>
+          <input type="text" id="muleDomains" placeholder="betsat1718.com, m-betsat1627.com">
+        </div>
+        <div class="field">
+          <label for="muleNote">Not (opsiyonel)</label>
+          <input type="text" id="muleNote" placeholder="Chainabuse'a raporlandı mı, kanal vb.">
+        </div>
+      </div>
+      <button class="btn-ghost" id="addMuleBtn" style="width:100%; margin-bottom:14px;">+ Veritabanına Ekle</button>
+      <input type="text" id="muleSearch" placeholder="İsim, IBAN, cüzdan veya domain ara..." class="log-search">
+      <div id="muleDbList" class="unknown-cluster-list">
+        <div class="log-empty">Henüz mule kaydı yok.</div>
+      </div>
+      <div class="log-actions" style="margin-top:12px;">
+        <button class="btn-ghost" id="copyMuleDbBtn">📋 Listeyi Kopyala</button>
+      </div>
+    </div>
+  </div>
+  <div class="panel wide-section">
     <div class="config-toggle" id="unknownClusterToggle">
       <span id="unknownClusterArrow">▸</span> Bilinmeyen Cluster Takibi <span class="badge-count" id="unknownClusterCount"></span>
     </div>
@@ -622,6 +693,8 @@ function wireToggle(toggleId, bodyId, arrowId){
 }
 wireToggle('unknownClusterToggle', 'unknownClusterBody', 'unknownClusterArrow');
 wireToggle('clusterRefToggle', 'clusterRefBody', 'clusterRefArrow');
+wireToggle('pendingEvidenceToggle', 'pendingEvidenceBody', 'pendingEvidenceArrow');
+wireToggle('muleDbToggle', 'muleDbBody', 'muleDbArrow');
 // ============================================================
 // BİLİNEN CLUSTER / HOST REFERANSI (v4 — 19 Ağu 2026)
 // manual_complaint.py'deki HOSTS + CLUSTER_MAP'ten OTOMATİK üretildi
@@ -840,6 +913,154 @@ function renderClusterRef(filterText){
   }).join('');
 }
 document.getElementById('clusterRefSearch').addEventListener('input', (e) => renderClusterRef(e.target.value.trim()));
+// ============================================================
+// BEKLEYEN KANIT TALEPLERİ (v6 — 21 Ağu 2026)
+// NiceNIC/registrar "kanıt yetersiz" dediğinde elle eklenen, elle
+// "çözüldü" işaretlenen basit bir takip listesi. localStorage'da
+// 'pending-evidence' altında tutulur.
+// ============================================================
+const PENDING_CHANNEL_LABELS = {
+  nicenic: "NiceNIC", dynadot: "Dynadot (web form)", trustname: "Trustname (web form)", other: "Diğer"
+};
+function loadPendingEvidence(){
+  try{
+    const raw = localStorage.getItem('pending-evidence');
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){ return []; }
+}
+function savePendingEvidence(list){
+  try{ localStorage.setItem('pending-evidence', JSON.stringify(list)); }catch(e){}
+}
+function renderPendingEvidence(){
+  const list = loadPendingEvidence();
+  const container = document.getElementById('pendingEvidenceList');
+  const countEl = document.getElementById('pendingEvidenceCount');
+  const openCount = list.filter(i => !i.resolved).length;
+  countEl.textContent = openCount ? openCount : '';
+  if(!list.length){
+    container.innerHTML = '<div class="log-empty">Bekleyen kanıt talebi yok.</div>';
+    return;
+  }
+  container.innerHTML = list.map((item, idx) => {
+    const chLabel = PENDING_CHANNEL_LABELS[item.channel] || item.channel;
+    const resolvedStyle = item.resolved ? 'opacity:0.45; text-decoration:line-through;' : '';
+    return '<div class="unknown-cluster-item" style="align-items:flex-start; ' + resolvedStyle + '">' +
+      '<span><b>' + item.domain + '</b> — ' + chLabel + (item.note ? ' — ' + item.note : '') + ' <span style="color:var(--muted); font-size:10.5px;">(' + item.addedAt + ')</span></span>' +
+      '<button class="btn-ghost" style="padding:4px 9px; font-size:11px;" data-idx="' + idx + '" data-action="' + (item.resolved ? 'reopen' : 'resolve') + '">' + (item.resolved ? '↺ Geri Aç' : '✓ Çözüldü') + '</button>' +
+    '</div>';
+  }).join('');
+  container.querySelectorAll('button[data-idx]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.idx, 10);
+      const list = loadPendingEvidence();
+      if(list[idx]) list[idx].resolved = btn.dataset.action === 'resolve';
+      savePendingEvidence(list);
+      renderPendingEvidence();
+    });
+  });
+}
+document.getElementById('addPendingEvidenceBtn').addEventListener('click', () => {
+  const domain = document.getElementById('pendingDomain').value.trim();
+  if(!domain) return;
+  const channel = document.getElementById('pendingChannel').value;
+  const note = document.getElementById('pendingNote').value.trim();
+  const list = loadPendingEvidence();
+  list.push({domain, channel, note, resolved: false, addedAt: new Date().toLocaleString('tr-TR')});
+  savePendingEvidence(list);
+  document.getElementById('pendingDomain').value = '';
+  document.getElementById('pendingNote').value = '';
+  renderPendingEvidence();
+});
+// ============================================================
+// MULE VERİTABANI (v6 — 21 Ağu 2026)
+// Elle eklenen (ekran görüntüsünden) ve script'in otomatik tespit
+// ettiği (bkz. renderResultsDetail içindeki mule_detected/mule_
+// correlations) IBAN/cüzdan kayıtlarını tek bir yerde birleştirir.
+// localStorage'da 'mule-db' altında tutulur.
+// ============================================================
+function loadMuleDb(){
+  try{
+    const raw = localStorage.getItem('mule-db');
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){ return []; }
+}
+function saveMuleDb(list){
+  try{ localStorage.setItem('mule-db', JSON.stringify(list)); }catch(e){}
+}
+function addMuleEntry(name, value, domains, note){
+  if(!value) return;
+  const list = loadMuleDb();
+  const existing = list.find(i => i.value.toLowerCase() === value.toLowerCase());
+  const domainList = domains.split(',').map(d => d.trim()).filter(Boolean);
+  if(existing){
+    domainList.forEach(d => { if(!existing.domains.includes(d)) existing.domains.push(d); });
+    if(name && !existing.name) existing.name = name;
+    if(note) existing.note = note;
+  } else {
+    list.push({name: name || '', value, domains: domainList, note: note || '', addedAt: new Date().toLocaleString('tr-TR')});
+  }
+  saveMuleDb(list);
+}
+function renderMuleDb(filterText){
+  const list = loadMuleDb();
+  const container = document.getElementById('muleDbList');
+  const countEl = document.getElementById('muleDbCount');
+  countEl.textContent = list.length ? list.length : '';
+  const f = (filterText || '').toLowerCase();
+  const filtered = !f ? list : list.filter(i =>
+    (i.name || '').toLowerCase().includes(f) ||
+    i.value.toLowerCase().includes(f) ||
+    i.domains.some(d => d.toLowerCase().includes(f))
+  );
+  if(!filtered.length){
+    container.innerHTML = '<div class="log-empty">' + (f ? 'Eşleşme yok.' : 'Henüz mule kaydı yok.') + '</div>';
+    return;
+  }
+  container.innerHTML = filtered.map(item => {
+    const domainChips = item.domains.map(d => '<span class="log-domain-chip">' + d + '</span>').join(' ');
+    const repeatBadge = item.domains.length > 1 ? '<span class="rd-chip fail">🧬 ' + item.domains.length + ' domain\'de tekrar</span>' : '';
+    return '<div class="unknown-cluster-item" style="flex-direction:column; align-items:stretch; gap:6px;">' +
+      '<div><b>' + (item.name || 'İsimsiz') + '</b> — <span style="font-family:\'IBM Plex Mono\', monospace;">' + item.value + '</span> ' + repeatBadge + '</div>' +
+      '<div>' + domainChips + '</div>' +
+      (item.note ? '<div class="rd-note">' + item.note + '</div>' : '') +
+    '</div>';
+  }).join('');
+}
+document.getElementById('addMuleBtn').addEventListener('click', () => {
+  const name = document.getElementById('muleName').value.trim();
+  const value = document.getElementById('muleValue').value.trim();
+  const domains = document.getElementById('muleDomains').value.trim();
+  const note = document.getElementById('muleNote').value.trim();
+  if(!value){ return; }
+  addMuleEntry(name, value, domains, note);
+  document.getElementById('muleName').value = '';
+  document.getElementById('muleValue').value = '';
+  document.getElementById('muleDomains').value = '';
+  document.getElementById('muleNote').value = '';
+  renderMuleDb();
+});
+document.getElementById('muleSearch').addEventListener('input', (e) => renderMuleDb(e.target.value.trim()));
+document.getElementById('copyMuleDbBtn').addEventListener('click', () => {
+  const list = loadMuleDb();
+  if(!list.length) return;
+  const text = list.map(i => (i.name || 'İsimsiz') + ' — ' + i.value + ' — ' + i.domains.join(', ') + (i.note ? ' — ' + i.note : '')).join('\n');
+  navigator.clipboard.writeText(text).then(() => {
+    showStatus('ok', '✓ Mule veritabanı panoya kopyalandı.');
+  }).catch(() => {});
+});
+// Script'in otomatik tespit ettiği mule bilgilerini veritabanına birleştirir
+// (renderResultsDetail her yeni dispatch sonucu geldiğinde çağırır)
+function mergeMuleDetectionsFromResults(resultsJson){
+  if(!resultsJson || !Array.isArray(resultsJson.domains)) return;
+  resultsJson.domains.forEach(d => {
+    const detected = d.mule_detected;
+    if(!detected) return;
+    [...(detected.ibans || []), ...(detected.wallets || [])].forEach(value => {
+      addMuleEntry('', value, d.domain, 'Script tarafından otomatik tespit edildi');
+    });
+  });
+  renderMuleDb();
+}
 // ============================================================
 // BİLİNMEYEN CLUSTER TAKİBİ
 // ============================================================
@@ -1125,34 +1346,71 @@ function generateRequestId(){
   if(window.crypto && window.crypto.randomUUID) return window.crypto.randomUUID();
   return 'req-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10);
 }
+function extractFormUrl(noteText){
+  const m = noteText && noteText.match(/https?:\/\/\S+/);
+  return m ? m[0].replace(/[.,;]+$/, '') : null;
+}
 function renderResultsDetail(resultsJson){
   const container = document.getElementById('resultsDetail');
   if(!resultsJson || !Array.isArray(resultsJson.domains)){
     container.innerHTML = '';
     return;
   }
-  container.innerHTML = resultsJson.domains.map(d => {
+  container.innerHTML = resultsJson.domains.map((d, di) => {
     const chips = (d.channels || []).map(c => {
       const cls = c.status === 'ok' ? 'ok' : c.status === 'fail' ? 'fail' : 'skip';
       const icon = c.status === 'ok' ? '✅' : c.status === 'fail' ? '❌' : '⚠️';
       return '<span class="rd-chip ' + cls + '">' + icon + ' ' + c.label + '</span>';
     }).join('');
     let notes = '';
+    let webFormBtn = '';
     (d.channels || []).forEach(c => {
-      if(c.detail) notes += '<div class="rd-note">' + c.label + ': ' + c.detail + '</div>';
+      if(c.detail){
+        notes += '<div class="rd-note">' + c.label + ': ' + c.detail + '</div>';
+        if(!webFormBtn && c.detail.includes('SADECE WEB FORM')){
+          const formUrl = extractFormUrl(c.detail);
+          if(formUrl){
+            webFormBtn = '<button class="btn-ghost" data-form-url="' + formUrl + '" data-domain-idx="' + di + '" data-action="webform-copy" style="margin-top:8px;">📋 Formu Aç + Kanıtı Kopyala</button>';
+          }
+        }
+      }
     });
+    let muleHtml = '';
+    const md = d.mule_detected;
+    if(md && ((md.ibans && md.ibans.length) || (md.wallets && md.wallets.length))){
+      const values = [].concat(md.ibans || [], md.wallets || []);
+      muleHtml += '<div class="rd-note">🧬 Tespit edilen mule bilgisi: ' + values.join(', ') + '</div>';
+    }
+    if(d.mule_correlations && d.mule_correlations.length){
+      d.mule_correlations.forEach(c => {
+        muleHtml += '<div class="rd-note" style="color:var(--danger);">🧬 Tekrar: ' + c.value + ' daha önce şurada da görülmüş: ' + c.seen_on.join(', ') + '</div>';
+      });
+    }
     return '<div class="results-domain">' +
       '<div class="rd-title">' + d.domain + ' — ' + d.brand + ' (' + d.found_urls_count + ' kanıt URL)</div>' +
       '<div class="rd-channels">' + chips + '</div>' +
-      notes +
+      notes + muleHtml + webFormBtn +
     '</div>';
   }).join('');
+  container.querySelectorAll('button[data-action="webform-copy"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const di = parseInt(btn.dataset.domainIdx, 10);
+      const d = resultsJson.domains[di];
+      const text = d.domain + '\n' + (d.found_urls || []).join('\n');
+      navigator.clipboard.writeText(text).then(() => {
+        showStatus('ok', '✓ Domain ve kanıt URL\'leri panoya kopyalandı, form yeni sekmede açılıyor…');
+      }).catch(() => {});
+      window.open(btn.dataset.formUrl, '_blank', 'noopener');
+    });
+  });
   // Bilinmeyen cluster'ları otomatik takip listesine ekle
   resultsJson.domains.forEach(d => {
     if(d.host && d.host.status === 'unknown_cluster'){
       addUnknownCluster(d.domain, d.host.observed_ns);
     }
   });
+  // Script'in otomatik tespit ettiği mule bilgilerini veritabanına birleştir
+  mergeMuleDetectionsFromResults(resultsJson);
 }
 async function pollForResults(repo, requestId, pat, branch){
   const maxTries = 24;
@@ -1274,6 +1532,8 @@ loadLog();
 updateActionsLink();
 renderClusterRef();
 renderUnknownClusters();
+renderPendingEvidence();
+renderMuleDb();
 updateDuplicateWarning();
 </script>
 </body>
