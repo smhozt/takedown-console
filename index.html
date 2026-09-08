@@ -287,6 +287,14 @@
   .log-entry .lt{color:var(--muted); font-family:'IBM Plex Mono', monospace; font-size:11px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;}
   .log-entry .lt .case-num{color:#5B6980;}
   .log-domains{display:flex; flex-wrap:wrap; gap:5px; margin-bottom:8px;}
+  /* DÜZELTİLDİ 8 Eyl 2026 — çok uzun tek-parça URL'ler (boşluksuz,
+     örn. npays-havale.com/x/uzun-token-dizisi) satır kıramadığı için
+     chip kendi genişliğini panelin dışına taşırıyor, tüm sağ sütunu
+     ve altındaki log girdilerini yatayda kaydırıyordu (bkz. ekran
+     görüntüsündeki bozulma). max-width + word-break + overflow-wrap
+     ile chip artık kapsayıcının genişliğini asla aşmıyor, gerekirse
+     kelime ortasından satır kırıyor. .rd-title'da zaten aynı çözüm
+     (word-break:break-all) kullanılıyordu, buraya da uygulandı. */
   .log-domain-chip{
     font-family:'IBM Plex Mono', monospace;
     font-size:11px;
@@ -295,6 +303,9 @@
     color:var(--text);
     padding:3px 8px;
     border-radius:4px;
+    max-width:100%;
+    word-break:break-all;
+    overflow-wrap:anywhere;
   }
   .log-channels{display:flex; flex-wrap:wrap; gap:5px;}
   .log-channel-badge{
@@ -749,6 +760,9 @@ const KNOWN_HOSTS = {
   ipvendetta: {name: "IP Vendetta Inc.", email: "abuse@ipvendetta.com"},
   desi_josh_ambiguous: {name: "SwissNet / VPS Datacenter (belirsiz)", email: "abuse@swissnetwork.io, abuse@private-data-center.com"},
   dayana_kurt_ambiguous: {name: "Netiface / VPS Dedicated (flashwisp) (belirsiz)", email: "abuse@abusehandler.net, abuse@vpsdedicated.net, abuse@flashwisp.com.ng"},
+  techties: {name: "TechTies Inc.", email: "noc@techties.net"},
+  ultahost: {name: "Ultahost, Inc.", email: "u-abuse@ultahost.com"},
+  ayosoft: {name: "Ayosoft Ltd (dexdc.com — e-posta bounce ediyor, alternatif kanal yok)", email: "abuse@dexdc.com"},
 };
 const KNOWN_CLUSTERS = [
   ["abdullah/liv", "swissnet"],
@@ -757,6 +771,7 @@ const KNOWN_CLUSTERS = [
   ["adaline/joaquin", "netiface"],
   ["adel/albert", "netiface"],
   ["adi/langston", "vpsdatacenter"],
+  ["adelaide/johnathan", "netiface"],
   ["aida/lee", "swissnet"],
   ["aiden/naya", "synlinq"],
   ["ainsley/lamar", "swissnet"],
@@ -771,9 +786,10 @@ const KNOWN_CLUSTERS = [
   ["alice/seamus", "fatcat_epikhost"],
   ["aliza/dean", "netiface"],
   ["andronicus/emely", "vpsdatacenter"],
+  ["annabel/razvan", "netiface"],
   ["ara/mark", "fatcat_epikhost"],
   ["archer/lana", "digitalocean"],
-  ["archer/melissa", "omegatech"],
+  ["archer/melissa", "synlinq"],
   ["ariella/ruben", "vpsdedicated_flashwisp"],
   ["armando/melody", "colocatel"],
   ["aron/javier", "colocatel"],
@@ -797,6 +813,7 @@ const KNOWN_CLUSTERS = [
   ["carol/mustafa", "netiface"],
   ["cartman/elma", "virtualsystems"],
   ["cash/macy", "weridata"],
+  ["cass/shane", "krnic"],
   ["chad/lucy", "netiface"],
   ["charles/novalee", "netiface"],
   ["clayton/jade", "vpsdatacenter"],
@@ -808,17 +825,21 @@ const KNOWN_CLUSTERS = [
   ["cortney/denver", "privatelayer"],
   ["cosmin/melany", "frantech"],
   ["crystal/marty", "frostyhosting"],
-  ["cruz/hasslo", "omegatech"],
+  ["cruz/hasslo", "frostyhosting"],
   ["damiete/elisa", "pfcloud_vmheaven"],
+  ["daniella/ezra", "netiface"],
   ["daniella/felipe", "play2go"],
+  ["dawn/sterling", "krnic"],
   ["dayana/harlan", "weridata"],
   ["dayana/kurt", "dayana_kurt_ambiguous"],
+  ["deb/nash", "techties"],
   ["decker/dolly", "alexhost"],
   ["decker/liberty", "prq"],
   ["delilah/jack", "swissnet"],
   ["desi/josh", "desi_josh_ambiguous"],
   ["devin/nucum", "netiface"],
   ["donovan/melinda", "netiface"],
+  ["drake/adaline", "frostyhosting"],
   ["drew/leia", "pfcloud"],
   ["ed/kate", "frantech"],
   ["edna/shane", "swissnet"],
@@ -839,6 +860,7 @@ const KNOWN_CLUSTERS = [
   ["eve/sean", "vpsdatacenter"],
   ["ezra/veda", "ezra_veda_ambiguous"],
   ["fattouche/luciane", "swissnet"],
+  ["fish/watson", "evoxt"],
   ["fred/ivy", "frantech"],
   ["gabe/raegan", "advin"],
   ["gail/lennox", "fatcat_scrhost"],
@@ -849,17 +871,20 @@ const KNOWN_CLUSTERS = [
   ["georgia/kobe", "georgia_kobe_ambiguous"],
   ["hal/lola", "frantech"],
   ["harlee/tim", "vpsdatacenter"],
+  ["henrik/nena", "frostyhosting"],
   ["huxley/kami", "pfcloud_io"],
   ["igor/ziggy", "netiface"],
   ["imani/kipp", "koddos"],
   ["isla/nolan", "omegatech"],
   ["jack/nora", "netiface"],
   ["james/maeve", "vpsdatacenter"],
+  ["jen/mark", "synlinq"],
   ["jen/paul", "pfcloud"],
   ["jeremy/kay", "jeremy_kay_ambiguous"],
   ["jewel/vin", "vpsdatacenter"],
   ["justin/sierra", "netiface"],
   ["kanye/magnolia", "omegatech"],
+  ["kate/razvan", "ipvendetta"],
   ["katja/tosana", "frantech"],
   ["keaton/shaz", "netiface"],
   ["kehlani/yahir", "frostyhosting"],
@@ -868,12 +893,16 @@ const KNOWN_CLUSTERS = [
   ["kurt/leah", "colocatel"],
   ["kyle/roxy", "netiface"],
   ["leanna/patrick", "vpsdedicated_flashwisp"],
+  ["ligia/major", "frantech"],
   ["luciane/oswald", "luciane_oswald_ambiguous"],
+  ["marek/simone", "netiface"],
   ["marge/sullivan", "frantech"],
   ["mario/norah", "mario_norah_ambiguous"],
+  ["marlowe/miguel", "krnic"],
   ["martha/rex", "netiface"],
   ["maya/uriah", "virtualsystems"],
   ["mimi/sevki", "mimi_sevki_ambiguous"],
+  ["nikon/crystal", "colocatel"],
   ["nitin/raina", "colocatel"],
   ["nitin/selah", "privatelayer"],
   ["opal/ricardo", "evoxt"],
@@ -1168,6 +1197,12 @@ function renderStats(){
     <div class="log-stat"><div class="num">${todayCount}</div><div class="lbl">Bugün</div></div>
   `;
 }
+// DÜZELTİLDİ 8 Eyl 2026 — bkz. .log-domain-chip CSS notu. Çok uzun,
+// boşluksuz URL'ler (npays-havale.com/x/... gibi) chip'i panelin
+// dışına taşırıyordu. CSS'teki word-break/overflow-wrap tek başına
+// yeterliydi ama okunurluğu da artırmak için burada ayrıca 60
+// karakteri aşan domainler "…" ile kısaltılıyor; tam metin title
+// attribute'unda (üzerine gelince tooltip olarak) duruyor.
 function renderLog(entries, filterText){
   const log = document.getElementById('log');
   let filtered = entries;
@@ -1186,9 +1221,11 @@ function renderLog(entries, filterText){
     // Eski kayıtlarda bu alan yoksa (güncelleme öncesi veri), geriye dönük uyumluluk
     // için dizideki konuma göre kaba bir numara üretilir.
     const caseNum = e.caseNumber || (entries.indexOf(e) + 1);
-    const domainChips = e.domains.split(',').map(d =>
-      '<span class="log-domain-chip">' + d.trim() + '</span>'
-    ).join('');
+    const domainChips = e.domains.split(',').map(d => {
+      const trimmed = d.trim();
+      const display = trimmed.length > 60 ? trimmed.slice(0, 57) + '…' : trimmed;
+      return '<span class="log-domain-chip" title="' + trimmed.replace(/"/g, '&quot;') + '">' + display + '</span>';
+    }).join('');
     let bodyHtml;
     if(e.results && Array.isArray(e.results.domains)){
       let okCount = 0, failCount = 0;
