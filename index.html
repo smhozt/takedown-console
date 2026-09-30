@@ -390,6 +390,7 @@
           <label class="channel active" data-target="spam404"><input type="checkbox" checked><span class="node"></span>Spam404</label>
           <label class="channel active" data-target="spamhaus"><input type="checkbox" checked><span class="node"></span>Spamhaus</label>
           <label class="channel active" data-target="apwg"><input type="checkbox" checked><span class="node"></span>APWG</label>
+          <label class="channel active" data-target="netbeacon"><input type="checkbox" checked><span class="node"></span>NetBeacon</label>
         </div>
       </div>
       <div class="field" id="customEmailField" style="display:none;">
@@ -559,7 +560,8 @@
 const CHANNEL_LABELS = {
   nicenic: "NICENIC", host: "HOST", custom_email: "MAIL", compromise_notice: "HACK-BİLDİRİM",
   netcraft: "NETCRAFT", safebrowsing: "SAFEBR", googlespam: "GSPAM",
-  smartscreen: "SMARTSC", spam404: "SPAM404", spamhaus: "SPAMHAUS", apwg: "APWG"
+  smartscreen: "SMARTSC", spam404: "SPAM404", spamhaus: "SPAMHAUS", apwg: "APWG",
+  netbeacon: "NETBEACON"
 };
 let caseCounter = 0;
 // ============================================================
@@ -1262,7 +1264,7 @@ document.getElementById('exportLogBtn').addEventListener('click', () => {
     rows.push([e.time, e.domains, e.targets.join(' | ')]);
   });
   const csv = rows.map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n');
-  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
